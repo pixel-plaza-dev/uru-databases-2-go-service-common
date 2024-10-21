@@ -5,27 +5,29 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
+	"time"
 )
 
 // Connect returns a new MongoDB client
-func Connect(uri string, logger *logger.MongoDbLogger) (*mongo.Client, error) {
+func Connect(uri string, logger *logger.MongoDbLogger, timeout time.Duration) (*mongo.Client, context.Context, context.CancelFunc, error) {
 	// Set client options
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	clientOptions := options.Client().ApplyURI(uri)
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		logger.FailedToConnectToMongoDb(err)
+		return client, ctx, cancel, err
 	}
 
 	// Check the connection
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		logger.FailedToConnectToMongoDb(err)
+		return client, ctx, cancel, err
 	}
 
 	// Log the connection
 	logger.ConnectedToMongoDB()
 
-	return client, nil
+	return client, ctx, cancel, nil
 }
 
 // Disconnect closes the MongoDB client connection

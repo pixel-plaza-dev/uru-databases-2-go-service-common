@@ -11,7 +11,7 @@ func LoadServicePort(key string, logger *logger.EnvironmentLogger) (port string,
 	// Get environment variable
 	port, exists := os.LookupEnv(key)
 	if !exists {
-		logger.VariableNotFound("Port", key)
+		logger.VariableNotFound(key)
 	}
 
 	// Build port string
@@ -27,7 +27,7 @@ func LoadMongoDBURI(key string, logger *logger.EnvironmentLogger) (uri string) {
 	// Get environment variable
 	uri, uriExists := os.LookupEnv(key)
 	if !uriExists {
-		logger.VariableNotFound("URI", key)
+		logger.VariableNotFound(key)
 	}
 	return uri
 }
@@ -37,7 +37,7 @@ func LoadMongoDBName(key string, logger *logger.EnvironmentLogger) (database str
 	// Get environment variable
 	database, databaseExists := os.LookupEnv(key)
 	if !databaseExists {
-		logger.VariableNotFound("Database", key)
+		logger.VariableNotFound(key)
 	}
 
 	return database

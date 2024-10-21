@@ -5,6 +5,6 @@ type UsersLogger struct {
 }
 
 // NewUsersLogger creates a new users logger
-func NewUsersLogger(name string) UsersLogger {
-	return UsersLogger{logger: Logger{name}}
+func NewUsersLogger(name string) *UsersLogger {
+	return &UsersLogger{logger: Logger{name}}
 }

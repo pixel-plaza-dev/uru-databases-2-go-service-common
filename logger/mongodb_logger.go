@@ -9,8 +9,8 @@ type MongoDbLogger struct {
 }
 
 // NewMongoDbLogger is the logger for the MongoDB model
-func NewMongoDbLogger(name string) MongoDbLogger {
-	return MongoDbLogger{logger: Logger{name}}
+func NewMongoDbLogger(name string) *MongoDbLogger {
+	return &MongoDbLogger{logger: Logger{name}}
 }
 
 // ErrorConnectingToMongoDB logs an error message when the server fails to connect to MongoDB

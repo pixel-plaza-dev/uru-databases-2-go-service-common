@@ -9,8 +9,8 @@ type EnvironmentLogger struct {
 }
 
 // NewEnvironmentLogger creates a new environment logger
-func NewEnvironmentLogger(name string) EnvironmentLogger {
-	return EnvironmentLogger{logger: Logger{name}}
+func NewEnvironmentLogger(name string) *EnvironmentLogger {
+	return &EnvironmentLogger{logger: Logger{name}}
 }
 
 // ErrorLoadingEnvironmentVariables logs an error message when the environment variables fail to load

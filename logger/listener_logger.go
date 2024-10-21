@@ -9,8 +9,8 @@ type ListenerLogger struct {
 }
 
 // NewListenerLogger creates a new listener logger
-func NewListenerLogger(name string) ListenerLogger {
-	return ListenerLogger{logger: Logger{name}}
+func NewListenerLogger(name string) *ListenerLogger {
+	return &ListenerLogger{logger: Logger{name}}
 }
 
 // FailedToListen logs an error message when the grpc_server fails to listen

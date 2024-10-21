@@ -7,7 +7,7 @@ import (
 )
 
 // LoadServicePort load Service port from environment variables
-func LoadServicePort(key string, logger logger.EnvironmentLogger) (port string, formattedPort string) {
+func LoadServicePort(key string, logger *logger.EnvironmentLogger) (port string, formattedPort string) {
 	// Get environment variable
 	port, exists := os.LookupEnv(key)
 	if !exists {
@@ -23,7 +23,7 @@ func LoadServicePort(key string, logger logger.EnvironmentLogger) (port string, 
 }
 
 // LoadMongoDBURI load MongoDB URI from environment variables
-func LoadMongoDBURI(key string, logger logger.EnvironmentLogger) (uri string) {
+func LoadMongoDBURI(key string, logger *logger.EnvironmentLogger) (uri string) {
 	// Get environment variable
 	uri, uriExists := os.LookupEnv(key)
 	if !uriExists {
@@ -33,7 +33,7 @@ func LoadMongoDBURI(key string, logger logger.EnvironmentLogger) (uri string) {
 }
 
 // LoadMongoDBName load MongoDB database name from environment variables
-func LoadMongoDBName(key string, logger logger.EnvironmentLogger) (database string) {
+func LoadMongoDBName(key string, logger *logger.EnvironmentLogger) (database string) {
 	// Get environment variable
 	database, databaseExists := os.LookupEnv(key)
 	if !databaseExists {

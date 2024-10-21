@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"log"
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error/environment"
 )
 
 type EnvironmentLogger struct {
@@ -13,16 +13,14 @@ func NewEnvironmentLogger(name string) *EnvironmentLogger {
 	return &EnvironmentLogger{logger: Logger{name}}
 }
 
-// ErrorLoadingEnvironmentVariables logs an error message when the environment variables fail to load
+// ErrorLoadingEnvironmentVariables logs an custom_error message when the environment variables fail to load
 func (e *EnvironmentLogger) ErrorLoadingEnvironmentVariables(err error) {
-	message := e.logger.buildErrorMessage("Error loading environment variables", err)
-	log.Fatalf(message)
+	environmentError := environment.LoadingEnvironmentVariablesError{Err: err}
+	e.logger.logError(environmentError)
 }
 
-// VariableNotFound logs an error message when a variable is not found
-func (e *EnvironmentLogger) VariableNotFound(fieldName string, variable string) {
-	message := fieldName + " not found"
-	message = e.logger.buildMessageWithDetails(message, variable)
-
-	log.Fatalf(message)
+// VariableNotFound logs an error message when an environment variable is not found
+func (e *EnvironmentLogger) VariableNotFound(variable string) {
+	variableNotFound := environment.VariableNotFoundError{Variable: variable}
+	e.logger.logError(variableNotFound)
 }

@@ -1,8 +1,8 @@
 package loader
 
 import (
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
 	"os"
-	"pixel_plaza/users_service/logger"
 	"strings"
 )
 

@@ -1,10 +1,10 @@
 package mongodb
 
 import (
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
-	"pixel_plaza/users_service/logger"
 )
 
 // Connect returns a new MongoDB client

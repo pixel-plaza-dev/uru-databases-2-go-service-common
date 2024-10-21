@@ -1,4 +1,4 @@
-module pixel_plaza/go_service_common
+module github.com/pixel-plaza-dev/uru-databases-2-go-service-common
 
 go 1.23.0
 

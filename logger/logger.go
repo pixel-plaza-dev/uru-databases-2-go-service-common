@@ -1,39 +1,41 @@
 package logger
 
 import (
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils"
 	"log"
 	"strings"
 )
 
 type Logger struct {
-	Name string
+	Name          string
+	FormattedName string
 }
 
-// buildMessage creates a string that contains a message that could be either a success or an custom_error
+// NewLogger creates a new logger
+func NewLogger(name string) *Logger {
+	return &Logger{Name: name, FormattedName: utils.AddBrackets(name)}
+
+}
+
+// buildMessage creates a string that contains a message that could be either a success or an error
 func (l *Logger) buildMessage(message string) string {
-	return "[" + l.Name + "] " + message
+	return strings.Join([]string{l.FormattedName, message}, " ")
 }
 
 // buildMessageWithDetails creates a string that contains a message with details
 func (l *Logger) buildMessageWithDetails(message string, details string) string {
-	return "[" + l.Name + "] " + message + ": " + details
-}
-
-// buildErrorMessage creates a string that contains an custom_error message
-func (l *Logger) buildErrorMessage(message string, err error) string {
-	return strings.Join([]string{l.Name, message, err.Error()}, " ")
-}
-
-// logError logs an error message
-func (l *Logger) logError(err error) {
-	// Log the custom_error
-	log.Println(err.Error())
-
-	// Panic
-	panic(err)
+	formattedDetails := utils.AddBrackets(details)
+	return strings.Join([]string{l.FormattedName, message, formattedDetails}, " ")
 }
 
 // logMessage logs a message
 func (l *Logger) logMessage(message string) {
-	log.Println(message)
+	formattedMessage := l.buildMessage(message)
+	log.Println(formattedMessage)
+}
+
+// logMessageWithDetails logs a message with details
+func (l *Logger) logMessageWithDetails(message string, details string) {
+	formattedMessage := l.buildMessageWithDetails(message, details)
+	log.Println(formattedMessage)
 }

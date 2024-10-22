@@ -1,14 +1,13 @@
 package utils
 
 import (
-	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
 	"os"
 )
 
 type Exit struct{ Code int }
 
 // ExitHandler is a defer function that handles the exit of the program
-func ExitHandler(logger *logger.ListenerLogger) {
+func ExitHandler() {
 	// Recover from panic
 	if err := recover(); err != nil {
 		// Check if the custom_error is an Exit

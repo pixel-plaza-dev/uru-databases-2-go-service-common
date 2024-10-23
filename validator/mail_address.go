@@ -2,7 +2,7 @@ package validator
 
 import "net/mail"
 
-func validMailAddress(address string) (string, bool) {
+func ValidMailAddress(address string) (string, bool) {
 	addr, err := mail.ParseAddress(address)
 	if err != nil {
 		return "", false

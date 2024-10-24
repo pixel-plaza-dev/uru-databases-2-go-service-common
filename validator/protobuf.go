@@ -2,7 +2,7 @@ package validator
 
 import (
 	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error/protobuf"
-	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error/validator"
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error_response/validator"
 )
 
 // ValidStringFields validates if the string fields are empty
@@ -19,7 +19,7 @@ func ValidStringFields(validations *map[string][]error, fields *map[string]strin
 
 	// If there are no errors, return nil
 	if failed {
-		return validator.FailedValidationError{}
+		return validator.FailedValidationError{FieldsErrors: validations}
 	}
 	return nil
 }

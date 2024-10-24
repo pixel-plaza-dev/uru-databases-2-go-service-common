@@ -11,5 +11,5 @@ func NewListenerLogger(name string) *ListenerLogger {
 
 // ServerStarted logs a success message when the server starts
 func (l *ListenerLogger) ServerStarted(port string) {
-	l.logger.logMessageWithDetails("Server started", port)
+	l.logger.LogMessageWithDetails("Server started", port)
 }

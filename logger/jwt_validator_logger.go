@@ -11,5 +11,5 @@ func NewJwtValidatorLogger(name string) *JwtValidatorLogger {
 
 // ValidatedToken logs a message when the server validates a token
 func (e *JwtIssuerLogger) ValidatedToken() {
-	e.logger.logMessage("Validated token")
+	e.logger.LogMessage("Validated token")
 }

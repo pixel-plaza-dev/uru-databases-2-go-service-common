@@ -17,25 +17,25 @@ func NewLogger(name string) *Logger {
 
 }
 
-// buildMessage creates a string that contains a message that could be either a success or an error
-func (l *Logger) buildMessage(message string) string {
+// BuildMessage creates a string that contains a message that could be either a success or an error
+func (l *Logger) BuildMessage(message string) string {
 	return strings.Join([]string{l.FormattedName, message}, " ")
 }
 
-// buildMessageWithDetails creates a string that contains a message with details
-func (l *Logger) buildMessageWithDetails(message string, details string) string {
+// BuildMessageWithDetails creates a string that contains a message with details
+func (l *Logger) BuildMessageWithDetails(message string, details string) string {
 	formattedDetails := utils.AddBrackets(details)
 	return strings.Join([]string{l.FormattedName, message, formattedDetails}, " ")
 }
 
-// logMessage logs a message
-func (l *Logger) logMessage(message string) {
-	formattedMessage := l.buildMessage(message)
+// LogMessage logs a message
+func (l *Logger) LogMessage(message string) {
+	formattedMessage := l.BuildMessage(message)
 	log.Println(formattedMessage)
 }
 
-// logMessageWithDetails logs a message with details
-func (l *Logger) logMessageWithDetails(message string, details string) {
-	formattedMessage := l.buildMessageWithDetails(message, details)
+// LogMessageWithDetails logs a message with details
+func (l *Logger) LogMessageWithDetails(message string, details string) {
+	formattedMessage := l.BuildMessageWithDetails(message, details)
 	log.Println(formattedMessage)
 }

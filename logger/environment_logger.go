@@ -12,5 +12,5 @@ func NewEnvironmentLogger(name string) *EnvironmentLogger {
 
 // EnvironmentVariableLoaded logs a message when an environment variable is loaded
 func (e *EnvironmentLogger) EnvironmentVariableLoaded(variableName string) {
-	e.logger.logMessageWithDetails("Environment variable loaded", variableName)
+	e.logger.LogMessageWithDetails("Environment variable loaded", variableName)
 }

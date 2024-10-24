@@ -11,5 +11,5 @@ func NewJwtIssuerLogger(name string) *JwtIssuerLogger {
 
 // IssuedToken logs a message when the server issues a token
 func (e *JwtIssuerLogger) IssuedToken() {
-	e.logger.logMessage("Issued token")
+	e.logger.LogMessage("Issued token")
 }

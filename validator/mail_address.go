@@ -1,12 +1,16 @@
 package validator
 
-import "net/mail"
+import (
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error/validator"
+	"net/mail"
+)
 
 // ValidMailAddress checks if the mail address is valid
-func ValidMailAddress(address string) (string, bool) {
+func ValidMailAddress(address string) (string, error) {
 	addr, err := mail.ParseAddress(address)
 	if err != nil {
-		return "", false
+		return "", validator.InvalidMailAddressError{MailAddress: address}
 	}
-	return addr.Address, true
+
+	return addr.Address, nil
 }

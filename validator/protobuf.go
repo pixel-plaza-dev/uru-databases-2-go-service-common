@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error/protobuf"
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error_response/protobuf"
 	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error_response/validator"
 )
 

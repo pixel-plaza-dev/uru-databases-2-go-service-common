@@ -1,10 +1,5 @@
 package jwt
 
-import (
-	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils"
-	"strings"
-)
-
 type KeyType string
 
 const (
@@ -24,7 +19,5 @@ type UnableToParseKeyError struct {
 
 // Error returns a formatted error message for UnableToParseKeyError
 func (u UnableToParseKeyError) Error() (message string) {
-	formattedKey := utils.AddParentheses(u.KeyType.String())
-	formattedError := utils.AddBrackets(u.Err.Error())
-	return strings.Join([]string{"Unable to parse", formattedKey, "key", formattedError}, " ")
+	return "Unable to parse '" + u.KeyType.String() + "' key: " + u.Err.Error()
 }

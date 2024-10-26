@@ -4,6 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/net/context"
 )
 
 type Order int
@@ -76,4 +77,30 @@ type Collection struct {
 // NewCollection creates a new MongoDB collection
 func NewCollection(name string, singleFieldIndexes *[]*SingleFieldIndex, compoundIndexes *[]*CompoundFieldIndex) *Collection {
 	return &Collection{Name: name, SingleFieldIndexes: singleFieldIndexes, CompoundIndexes: compoundIndexes}
+}
+
+// CreateIndexes creates the indexes for the collection
+func (c *Collection) CreateIndexes(database *mongo.Database) error {
+	// Get the collection
+	collection := database.Collection(c.Name)
+
+	// Create the single field indexes
+	if c.SingleFieldIndexes != nil {
+		for _, singleFieldIndex := range *c.SingleFieldIndexes {
+			_, err := collection.Indexes().CreateOne(context.Background(), *singleFieldIndex.Model)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Create the compound indexes
+	if c.CompoundIndexes != nil {
+		for _, compoundIndex := range *c.CompoundIndexes {
+			if _, err := collection.Indexes().CreateOne(context.Background(), *compoundIndex.Model); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }

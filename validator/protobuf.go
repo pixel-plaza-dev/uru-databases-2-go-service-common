@@ -1,25 +1,22 @@
 package validator
 
 import (
-	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error_response/protobuf"
 	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/custom_error_response/validator"
+	"reflect"
 )
 
-// ValidStringFields validates if the string fields are empty
-func ValidStringFields(validations *map[string][]error, fields *map[string]string) error {
-	failed := false
+// ValidNonEmptyStringFields validates if the string fields are empty
+func ValidNonEmptyStringFields(validations *map[string][]error, data interface{}, fields *[]string) {
+	// Reflection of data
+	dataReflection := reflect.ValueOf(data)
 
-	// Check if the fields are empty
-	for field, value := range *fields {
-		if value == "" {
-			(*validations)[field] = append((*validations)[field], protobuf.StringIsEmptyError{})
-			failed = true
+	// Iterate over the fields
+	for _, fieldName := range *fields {
+		// Get field
+		field := dataReflection.FieldByName(fieldName).String()
+
+		if len(field) == 0 {
+			(*validations)[fieldName] = append((*validations)[fieldName], validator.StringIsEmptyError{Field: fieldName})
 		}
 	}
-
-	// If there are no errors, return nil
-	if failed {
-		return validator.FailedValidationError{FieldsErrors: validations}
-	}
-	return nil
 }

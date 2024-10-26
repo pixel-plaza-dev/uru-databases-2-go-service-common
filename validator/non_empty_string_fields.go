@@ -6,7 +6,7 @@ import (
 )
 
 // ValidNonEmptyStringFields validates if the string fields are empty
-func ValidNonEmptyStringFields(validations *map[string][]error, data interface{}, fields *[]string) {
+func ValidNonEmptyStringFields(validations *map[string][]error, data interface{}, fields *map[string]string) {
 	// Reflection of data
 	dataReflection := reflect.ValueOf(data)
 
@@ -16,18 +16,23 @@ func ValidNonEmptyStringFields(validations *map[string][]error, data interface{}
 	}
 
 	// Iterate over the fields
-	for _, fieldName := range *fields {
+	for fieldName, validationName := range *fields {
 		// Get field
 		field := dataReflection.FieldByName(fieldName)
 
 		// Dereference the field if it is a pointer
 		if field.Kind() == reflect.Ptr {
+			// Check if the field exists
+			if field.IsNil() {
+				(*validations)[validationName] = append((*validations)[validationName], validator.FieldDoesNotExistError{})
+				continue
+			}
 			field = field.Elem()
 		}
 
 		// Check if the field is a string and is empty
 		if field.Kind() == reflect.String && len(field.String()) == 0 {
-			(*validations)[fieldName] = append((*validations)[fieldName], validator.StringIsEmptyError{Field: fieldName})
+			(*validations)[validationName] = append((*validations)[validationName], validator.StringIsEmptyError{})
 		}
 	}
 }

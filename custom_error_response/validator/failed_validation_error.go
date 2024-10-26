@@ -9,7 +9,7 @@ type FailedValidationError struct {
 // Error returns a formatted error message for FailedValidationError
 func (f FailedValidationError) Error() string {
 	var message strings.Builder
-	message.WriteString("Validation failed: {\n")
+	message.WriteString("Validation failed: { ")
 
 	// Iterate over all fields and their errors
 	for field, errors := range *f.FieldsErrors {
@@ -19,7 +19,7 @@ func (f FailedValidationError) Error() string {
 			message.WriteString(err.Error())
 			message.WriteString(", ")
 		}
-		message.WriteString("]\n")
+		message.WriteString("], ")
 	}
 	message.WriteString("}")
 

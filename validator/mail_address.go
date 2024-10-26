@@ -9,7 +9,7 @@ import (
 func ValidMailAddress(address string) (string, error) {
 	addr, err := mail.ParseAddress(address)
 	if err != nil {
-		return "", validator.InvalidMailAddressError{MailAddress: address}
+		return "", validator.InvalidMailAddressError{}
 	}
 
 	return addr.Address, nil

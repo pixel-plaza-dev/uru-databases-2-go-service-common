@@ -63,13 +63,13 @@ type UserPhoneNumberVerification struct {
 
 // UserResetPassword is the MongoDB for the user password reset entity
 type UserResetPassword struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id"`
-	UserID     primitive.ObjectID `json:"user_id" bson:"user_id"`
-	UUID       string             `json:"uuid" bson:"uuid"`
-	CreatedAt  time.Time          `json:"created_at" bson:"created_at"`
-	ExpiresAt  time.Time          `json:"expires_at" bson:"expires_at"`
-	VerifiedAt time.Time          `json:"verified_at,omitempty" bson:"verified_at,omitempty"`
-	RevokedAt  time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
+	ID        primitive.ObjectID `json:"id" bson:"_id"`
+	UserID    primitive.ObjectID `json:"user_id" bson:"user_id"`
+	UUID      string             `json:"uuid" bson:"uuid"`
+	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
+	ExpiresAt time.Time          `json:"expires_at" bson:"expires_at"`
+	UsedAt    time.Time          `json:"used_at,omitempty" bson:"used_at,omitempty"`
+	RevokedAt time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
 // UserUsernameLog is the MongoDB for the user username log entity

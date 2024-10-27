@@ -4,7 +4,7 @@ package auth_service
 type UserLogInAttempt struct {
 	ID           string `json:"id" bson:"_id"`
 	UserID       string `json:"user_id" bson:"user_id"`
-	IPAddress    string `json:"ip_address" bson:"ip_address"`
+	IPv4Address  string `json:"ipv4_address" bson:"ipv4_address"`
 	AttemptedAt  string `json:"attempted_at" bson:"attempted_at"`
 	IsSuccessful bool   `json:"is_successful" bson:"is_successful"`
 }
@@ -24,7 +24,7 @@ type JwtRefreshToken struct {
 type JwtRefreshTokenLog struct {
 	ID                string `json:"id" bson:"_id"`
 	JwtRefreshTokenID string `json:"jwt_refresh_token_id" bson:"jwt_refresh_token_id"`
-	IPAddress         string `json:"ip_address" bson:"ip_address"`
+	IPv4Address       string `json:"ipv4_address" bson:"ipv4_address"`
 	UsedAt            string `json:"used_at" bson:"used_at"`
 }
 
@@ -42,7 +42,7 @@ type JwtAccessToken struct {
 type JwtAccessTokenLog struct {
 	ID               string `json:"id" bson:"_id"`
 	JwtAccessTokenID string `json:"jwt_access_token_id" bson:"jwt_access_token_id"`
-	IPAddress        string `json:"ip_address" bson:"ip_address"`
+	IPv4Address      string `json:"ipv4_address" bson:"ipv4_address"`
 	UsedAt           string `json:"used_at" bson:"used_at"`
 }
 

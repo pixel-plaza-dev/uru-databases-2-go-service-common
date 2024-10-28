@@ -2,17 +2,17 @@ package env
 
 import "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
 
-type EnvironmentLogger struct {
+type Logger struct {
 	logger *logger.Logger
 }
 
-// NewEnvironmentLogger creates a new environment logger
-func NewEnvironmentLogger(name string) *EnvironmentLogger {
+// NewLogger creates a new environment logger
+func NewLogger(name string) *Logger {
 
-	return &EnvironmentLogger{logger: logger.NewLogger(name)}
+	return &Logger{logger: logger.NewLogger(name)}
 }
 
 // EnvironmentVariableLoaded logs a message when an environment variable is loaded
-func (e *EnvironmentLogger) EnvironmentVariableLoaded(variableName string) {
+func (e *Logger) EnvironmentVariableLoaded(variableName string) {
 	e.logger.LogMessageWithDetails("Environment variable loaded", variableName)
 }

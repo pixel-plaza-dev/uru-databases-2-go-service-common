@@ -9,16 +9,11 @@ import (
 
 // Issuer handles JWT issuing
 type Issuer struct {
-	name   string
-	key    *crypto.PrivateKey
-	logger *JwtIssuerLogger
+	key *crypto.PrivateKey
 }
 
 // NewIssuer creates a new issuer by parsing the given path as an ED25519 private key
-func NewIssuer(name string, privateKeyPath string) (*Issuer, error) {
-	// Create the issuer logger
-	issuerLogger := NewJwtIssuerLogger(name)
-
+func NewIssuer(privateKeyPath string) (*Issuer, error) {
 	// Read the private key file
 	keyBytes, err := os.ReadFile(privateKeyPath)
 	if err != nil {
@@ -32,9 +27,7 @@ func NewIssuer(name string, privateKeyPath string) (*Issuer, error) {
 	}
 
 	return &Issuer{
-		key:    &key,
-		name:   name,
-		logger: issuerLogger,
+		key: &key,
 	}, nil
 }
 

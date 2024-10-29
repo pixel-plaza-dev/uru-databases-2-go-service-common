@@ -9,16 +9,11 @@ import (
 
 // Validator does parsing and validation of JWT token
 type Validator struct {
-	name   string
-	key    *crypto.PublicKey
-	logger *Logger
+	key *crypto.PublicKey
 }
 
 // NewValidator returns a new validator by parsing the given file path as an ED25519 public key
-func NewValidator(name string, publicKeyPath string) (*Validator, error) {
-	// Create the validator logger
-	validatorLogger := NewJwtValidatorLogger(name)
-
+func NewValidator(publicKeyPath string) (*Validator, error) {
 	// Read the public key file
 	keyBytes, err := os.ReadFile(publicKeyPath)
 	if err != nil {
@@ -32,9 +27,7 @@ func NewValidator(name string, publicKeyPath string) (*Validator, error) {
 	}
 
 	return &Validator{
-		key:    &key,
-		name:   name,
-		logger: validatorLogger,
+		key: &key,
 	}, nil
 }
 

@@ -8,7 +8,6 @@ type Logger struct {
 
 // NewLogger creates a new environment logger
 func NewLogger(name string) *Logger {
-
 	return &Logger{logger: logger.NewLogger(name)}
 }
 

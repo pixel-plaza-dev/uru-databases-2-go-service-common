@@ -8,8 +8,8 @@ type Logger struct {
 	logger *logger.Logger
 }
 
-// NewJwtValidatorLogger creates a new JWT validator logger
-func NewJwtValidatorLogger(name string) *Logger {
+// NewLogger creates a new JWT validator logger
+func NewLogger(name string) *Logger {
 	return &Logger{logger: logger.NewLogger(name)}
 }
 

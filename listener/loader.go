@@ -16,7 +16,7 @@ func LoadServicePort(key string) (servicePort *ServicePort, err error) {
 	// Get environment variable
 	port, exists := os.LookupEnv(key)
 	if !exists {
-		return nil, enverror.VariableNotFoundError{VariableName: key}
+		return nil, enverror.VariableNotFoundError{Key: key}
 	}
 
 	// Build port string

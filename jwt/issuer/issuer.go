@@ -3,7 +3,7 @@ package issuer
 import (
 	"crypto"
 	"github.com/golang-jwt/jwt/v5"
-	commonjwterror "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/jwt/error"
+	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/jwt"
 	"os"
 	"time"
 )
@@ -18,13 +18,13 @@ func NewIssuer(privateKeyPath string) (*Issuer, error) {
 	// Read the private key file
 	keyBytes, err := os.ReadFile(privateKeyPath)
 	if err != nil {
-		return nil, commonjwterror.UnableToParseKeyError{Err: err, KeyType: commonjwterror.PrivateKey}
+		return nil, commonjwt.UnableToReadPrivateKeyFileError
 	}
 
 	// Parse the private key
 	key, err := jwt.ParseEdPrivateKeyFromPEM(keyBytes)
 	if err != nil {
-		return nil, commonjwterror.UnableToParseKeyError{Err: err, KeyType: commonjwterror.PrivateKey}
+		return nil, commonjwt.UnableToParsePrivateKeyError
 	}
 
 	return &Issuer{
@@ -50,7 +50,7 @@ func (i *Issuer) IssueToken(claims *jwt.MapClaims) (string, error) {
 	// Sign and get the complete encoded token as a string using the private key
 	tokenString, err := token.SignedString(i.key)
 	if err != nil {
-		return "", commonjwterror.UnableToIssueTokenError{Err: err}
+		return "", commonjwt.UnableToIssueTokenError
 	}
 
 	return tokenString, nil

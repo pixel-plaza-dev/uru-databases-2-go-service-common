@@ -1,7 +1,6 @@
 package mongodb
 
 import (
-	mongodberror "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/mongodb/error"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
@@ -31,13 +30,13 @@ func Connect(config *Config) (connection *Connection, err error) {
 
 	// Create MongoDB Connection struct
 	if err != nil {
-		return nil, mongodberror.FailedToConnectToMongoDbError{Err: err}
+		return nil, FailedToConnectError
 	}
 
 	// Check the connection
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		return nil, mongodberror.PingToMongoDbFailedError{Err: err}
+		return nil, FailedToPingError
 	}
 
 	return &Connection{Config: config, Client: client, Ctx: ctx, Cancel: cancel}, nil
@@ -49,7 +48,7 @@ func Disconnect(connection *Connection) {
 		// Close the connection
 		connection.Cancel()
 		if err := connection.Client.Disconnect(connection.Ctx); err != nil {
-			panic(mongodberror.FailedToDisconnectFromMongoDbError{Err: err})
+			panic(FailedToDisconnectError)
 		}
 	}()
 }

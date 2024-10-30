@@ -2,6 +2,7 @@ package bcrypt
 
 import (
 	"errors"
+	commoncrypto "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -9,7 +10,7 @@ import (
 func HashPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return "", err
+		return "", commoncrypto.FailedToHashPasswordError
 	}
 
 	return string(hash), nil
@@ -35,5 +36,8 @@ func IsHashed(str string) bool {
 
 	// Try to decode the hash
 	err := bcrypt.CompareHashAndPassword([]byte(str), []byte{})
-	return errors.Is(err, bcrypt.ErrMismatchedHashAndPassword)
+	if err != nil {
+		return errors.Is(err, bcrypt.ErrMismatchedHashAndPassword)
+	}
+	return true
 }

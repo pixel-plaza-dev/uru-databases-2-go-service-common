@@ -1,10 +1,11 @@
 package error
 
+// VariableNotFoundError is the error type for when a variable is not found in the environment
 type VariableNotFoundError struct {
-	VariableName string
+	Key string
 }
 
-// Error returns a formatted error message for VariableNotFoundError
-func (l VariableNotFoundError) Error() (message string) {
-	return "Environment variable not found: " + l.VariableName
+// Error returns the error message
+func (e VariableNotFoundError) Error() string {
+	return "Variable not found in environment: " + e.Key
 }

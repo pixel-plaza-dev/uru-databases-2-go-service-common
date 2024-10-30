@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/validator/error/response"
 	"reflect"
 )
 
@@ -24,7 +23,7 @@ func ValidNonEmptyStringFields(validations *map[string][]error, data interface{}
 		if field.Kind() == reflect.Ptr {
 			// Check if the field exists
 			if field.IsNil() {
-				(*validations)[validationName] = append((*validations)[validationName], response.FieldDoesNotExistError{})
+				(*validations)[validationName] = append((*validations)[validationName], FieldNotFoundError)
 				continue
 			}
 			field = field.Elem()
@@ -32,7 +31,7 @@ func ValidNonEmptyStringFields(validations *map[string][]error, data interface{}
 
 		// Check if the field is a string and is empty
 		if field.Kind() == reflect.String && len(field.String()) == 0 {
-			(*validations)[validationName] = append((*validations)[validationName], response.StringIsEmptyError{})
+			(*validations)[validationName] = append((*validations)[validationName], EmptyStringFieldError)
 		}
 	}
 }

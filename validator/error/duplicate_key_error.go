@@ -1,4 +1,4 @@
-package response
+package error
 
 type DuplicateKeyError struct {
 	Field string

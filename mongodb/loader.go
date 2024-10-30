@@ -10,7 +10,7 @@ func LoadMongoDBURI(key string) (uri string, err error) {
 	// Get environment variable
 	uri, uriExists := os.LookupEnv(key)
 	if !uriExists {
-		return "", enverror.VariableNotFoundError{VariableName: key}
+		return "", enverror.VariableNotFoundError{Key: key}
 	}
 	return uri, nil
 }
@@ -20,7 +20,7 @@ func LoadMongoDBName(key string) (database string, err error) {
 	// Get environment variable
 	database, databaseExists := os.LookupEnv(key)
 	if !databaseExists {
-		return "", enverror.VariableNotFoundError{VariableName: key}
+		return "", enverror.VariableNotFoundError{Key: key}
 	}
 
 	return database, nil

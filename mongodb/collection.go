@@ -99,7 +99,7 @@ func (c *Collection) createIndexes(collection *mongo.Collection) (err error) {
 		for _, singleFieldIndex := range *c.SingleFieldIndexes {
 			_, err = collection.Indexes().CreateOne(context.Background(), *singleFieldIndex.Model)
 			if err != nil {
-				return err
+				return FailedToCreateSingleFieldIndexError
 			}
 		}
 	}
@@ -108,7 +108,7 @@ func (c *Collection) createIndexes(collection *mongo.Collection) (err error) {
 	if c.CompoundIndexes != nil {
 		for _, compoundIndex := range *c.CompoundIndexes {
 			if _, err = collection.Indexes().CreateOne(context.Background(), *compoundIndex.Model); err != nil {
-				return err
+				return FailedToCreateCompoundIndexError
 			}
 		}
 	}

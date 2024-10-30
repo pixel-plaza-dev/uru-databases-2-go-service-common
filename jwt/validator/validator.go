@@ -48,6 +48,11 @@ func (v *Validator) GetToken(tokenString string, validateClaims func(*jwt.Token)
 		return nil, jwterror.UnableToParseTokenError{Err: err}
 	}
 
+	// Check if the token is valid
+	if !token.Valid {
+		return nil, jwterror.UnableToParseTokenError{Err: jwterror.InvalidTokenError{}}
+	}
+
 	// Validate the token claims with the given function
 	return validateClaims(token)
 }

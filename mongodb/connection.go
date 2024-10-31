@@ -10,7 +10,8 @@ import (
 type (
 	// ConnectionHandler interface
 	ConnectionHandler interface {
-		Connect() error
+		Connect() (*mongo.Client, error)
+		GetClient() (*mongo.Client, error)
 		Disconnect()
 	}
 
@@ -30,12 +31,12 @@ type (
 )
 
 // NewDefaultConnectionHandler creates a new connection
-func NewDefaultConnectionHandler(config *Config) *DefaultConnectionHandler {
+func NewDefaultConnectionHandler(config *Config) DefaultConnectionHandler {
 	// Set client options
 	ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
 	clientOptions := options.Client().ApplyURI(config.Uri)
 
-	return &DefaultConnectionHandler{
+	return DefaultConnectionHandler{
 		Cancel:        cancel,
 		Ctx:           ctx,
 		ClientOptions: clientOptions,
@@ -44,10 +45,10 @@ func NewDefaultConnectionHandler(config *Config) *DefaultConnectionHandler {
 }
 
 // Connect returns a new MongoDB client
-func (d *DefaultConnectionHandler) Connect() error {
+func (d DefaultConnectionHandler) Connect() (*mongo.Client, error) {
 	// Check if the connection is already established
 	if d.Client != nil {
-		return AlreadyConnectedError
+		return d.Client, AlreadyConnectedError
 	}
 
 	// Connect to MongoDB
@@ -55,23 +56,33 @@ func (d *DefaultConnectionHandler) Connect() error {
 
 	// Create MongoDB Connection struct
 	if err != nil {
-		return FailedToConnectError
+		return nil, FailedToConnectError
 	}
 
 	// Check the connection
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		return FailedToPingError
+		return nil, FailedToPingError
 	}
 
 	// Set client
 	d.Client = client
 
-	return nil
+	return client, nil
+}
+
+// GetClient returns the MongoDB client
+func (d DefaultConnectionHandler) GetClient() (*mongo.Client, error) {
+	// Check if the connection is established
+	if d.Client == nil {
+		return nil, NotConnectedError
+	}
+
+	return d.Client, nil
 }
 
 // Disconnect closes the MongoDB client connection
-func (d *DefaultConnectionHandler) Disconnect() {
+func (d DefaultConnectionHandler) Disconnect() {
 	defer func() {
 		// Check if the connection is established
 		if d.Client == nil {

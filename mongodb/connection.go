@@ -10,7 +10,7 @@ import (
 type (
 	// ConnectionHandler interface
 	ConnectionHandler interface {
-		Connect() error
+		Connect() (*mongo.Client, error)
 		Disconnect()
 	}
 
@@ -44,10 +44,10 @@ func NewDefaultConnectionHandler(config *Config) *DefaultConnectionHandler {
 }
 
 // Connect returns a new MongoDB client
-func (d *DefaultConnectionHandler) Connect() error {
+func (d *DefaultConnectionHandler) Connect() (*mongo.Client, error) {
 	// Check if the connection is already established
 	if d.Client != nil {
-		return AlreadyConnectedError
+		return d.Client, AlreadyConnectedError
 	}
 
 	// Connect to MongoDB
@@ -55,19 +55,19 @@ func (d *DefaultConnectionHandler) Connect() error {
 
 	// Create MongoDB Connection struct
 	if err != nil {
-		return FailedToConnectError
+		return nil, FailedToConnectError
 	}
 
 	// Check the connection
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		return FailedToPingError
+		return nil, FailedToPingError
 	}
 
 	// Set client
 	d.Client = client
 
-	return nil
+	return client, nil
 }
 
 // Disconnect closes the MongoDB client connection

@@ -2,6 +2,8 @@ package listener
 
 import "errors"
 
-var FailedToCloseError = errors.New("failed to close listener")
-var FailedToListenError = errors.New("failed to listen")
-var FailedToServeError = errors.New("failed to serve")
+var (
+	FailedToCloseError  = errors.New("failed to close listener")
+	FailedToListenError = errors.New("failed to listen")
+	FailedToServeError  = errors.New("failed to serve")
+)

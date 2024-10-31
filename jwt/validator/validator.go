@@ -11,17 +11,18 @@ import (
 // Validator does parsing and validation of JWT token
 type (
 	Validator interface {
-		Validate(tokenString string) (*jwt.Token, error)
+		GetToken(tokenString string) (*jwt.Token, error)
+		GetClaims(tokenString string) (*jwt.MapClaims, error)
 	}
 
 	DefaultValidator struct {
-		key            *crypto.PublicKey
-		validateClaims func(*jwt.Token) (*jwt.Token, error)
+		key       *crypto.PublicKey
+		getClaims func(*jwt.Token) (*jwt.MapClaims, error)
 	}
 )
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
-func NewDefaultValidator(publicKeyPath string, validateClaims func(*jwt.Token) (*jwt.Token, error)) (*DefaultValidator, error) {
+func NewDefaultValidator(publicKeyPath string, getClaims func(*jwt.Token) (*jwt.MapClaims, error)) (*DefaultValidator, error) {
 	// Read the public key file
 	keyBytes, err := os.ReadFile(publicKeyPath)
 	if err != nil {
@@ -35,13 +36,13 @@ func NewDefaultValidator(publicKeyPath string, validateClaims func(*jwt.Token) (
 	}
 
 	return &DefaultValidator{
-		key:            &key,
-		validateClaims: validateClaims,
+		key:       &key,
+		getClaims: getClaims,
 	}, nil
 }
 
-// Validate parses and validates the given JWT token string
-func (d *DefaultValidator) Validate(tokenString string) (*jwt.Token, error) {
+// GetToken parses the given JWT token string
+func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 	// Parse JWT and verify signature
 	token, err := jwt.Parse(
 		tokenString,
@@ -69,6 +70,18 @@ func (d *DefaultValidator) Validate(tokenString string) (*jwt.Token, error) {
 		return nil, commonjwt.InvalidTokenError
 	}
 
-	// Validate the token claims with the given function
-	return d.validateClaims(token)
+	// Get the claims from the token
+	return token, nil
+}
+
+// GetClaims parses and validates the given JWT token string
+func (d *DefaultValidator) GetClaims(tokenString string) (*jwt.MapClaims, error) {
+	// Get the token
+	token, err := d.GetToken(tokenString)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the claims from the token
+	return d.getClaims(token)
 }

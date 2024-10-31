@@ -2,6 +2,8 @@ package validator
 
 import "errors"
 
-var FieldNotFoundError = errors.New("field not found")
-var InvalidMailAddressError = errors.New("invalid mail address")
-var EmptyStringFieldError = errors.New("string field is empty")
+var (
+	FieldNotFoundError      = errors.New("field not found")
+	InvalidMailAddressError = errors.New("invalid mail address")
+	EmptyStringFieldError   = errors.New("string field is empty")
+)

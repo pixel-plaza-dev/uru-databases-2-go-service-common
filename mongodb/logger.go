@@ -4,12 +4,12 @@ import commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-commo
 
 // Logger is the logger for the MongoDB model
 type Logger struct {
-	logger *commonlogger.Logger
+	logger commonlogger.Logger
 }
 
 // NewLogger is the logger for the MongoDB model
-func NewLogger(logger *commonlogger.Logger) *Logger {
-	return &Logger{logger: logger}
+func NewLogger(logger commonlogger.Logger) Logger {
+	return Logger{logger: logger}
 }
 
 // ConnectedToMongoDB logs a success message when the server connects from MongoDB

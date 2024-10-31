@@ -5,12 +5,12 @@ import (
 )
 
 type Logger struct {
-	logger *commonlogger.Logger
+	logger commonlogger.Logger
 }
 
 // NewLogger creates a new JWT validator logger
-func NewLogger(logger *commonlogger.Logger) *Logger {
-	return &Logger{logger: logger}
+func NewLogger(logger commonlogger.Logger) Logger {
+	return Logger{logger: logger}
 }
 
 // ValidatedToken logs a message when the server validates a token

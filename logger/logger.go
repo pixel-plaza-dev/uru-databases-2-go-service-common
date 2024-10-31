@@ -23,8 +23,8 @@ type (
 )
 
 // NewDefaultLogger creates a new logger
-func NewDefaultLogger(name string) *DefaultLogger {
-	return &DefaultLogger{Name: name, FormattedName: utils.AddBrackets(name)}
+func NewDefaultLogger(name string) DefaultLogger {
+	return DefaultLogger{Name: name, FormattedName: utils.AddBrackets(name)}
 
 }
 

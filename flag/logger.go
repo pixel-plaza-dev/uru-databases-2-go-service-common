@@ -3,12 +3,12 @@ package flag
 import commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
 
 type Logger struct {
-	logger *commonlogger.Logger
+	logger commonlogger.Logger
 }
 
 // NewLogger is the logger for the flag
-func NewLogger(logger *commonlogger.Logger) *Logger {
-	return &Logger{logger: logger}
+func NewLogger(logger commonlogger.Logger) Logger {
+	return Logger{logger: logger}
 }
 
 // ModeFlagSet is the flag set for the mode

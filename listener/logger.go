@@ -13,6 +13,6 @@ func NewLogger(logger commonlogger.Logger) Logger {
 }
 
 // ServerStarted logs a success message when the server starts
-func (l *Logger) ServerStarted(port string) {
+func (l Logger) ServerStarted(port string) {
 	l.logger.LogMessageWithDetails("Server started", port)
 }

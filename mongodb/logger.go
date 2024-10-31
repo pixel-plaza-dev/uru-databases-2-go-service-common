@@ -13,11 +13,11 @@ func NewLogger(logger commonlogger.Logger) Logger {
 }
 
 // ConnectedToMongoDB logs a success message when the server connects from MongoDB
-func (m *Logger) ConnectedToMongoDB() {
-	m.logger.LogMessage("Connected to MongoDB")
+func (l Logger) ConnectedToMongoDB() {
+	l.logger.LogMessage("Connected to MongoDB")
 }
 
 // DisconnectedFromMongoDB logs a success message when the server disconnects from MongoDB
-func (m *Logger) DisconnectedFromMongoDB() {
-	m.logger.LogMessage("Disconnected from MongoDB")
+func (l Logger) DisconnectedFromMongoDB() {
+	l.logger.LogMessage("Disconnected from MongoDB")
 }

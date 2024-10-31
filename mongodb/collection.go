@@ -7,6 +7,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// Order represents the order of the index
 type Order int
 
 const (

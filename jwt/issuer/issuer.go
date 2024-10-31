@@ -8,13 +8,20 @@ import (
 	"time"
 )
 
-// Issuer handles JWT issuing
-type Issuer struct {
-	key *crypto.PrivateKey
-}
+type (
+	// Issuer is the interface for JWT issuing
+	Issuer interface {
+		IssueToken(claims *jwt.MapClaims) (string, error)
+	}
 
-// NewIssuer creates a new issuer by parsing the given path as an ED25519 private key
-func NewIssuer(privateKeyPath string) (*Issuer, error) {
+	// DefaultIssuer handles JWT issuing
+	DefaultIssuer struct {
+		key *crypto.PrivateKey
+	}
+)
+
+// NewDefaultIssuer creates a new issuer by parsing the given path as an ED25519 private key
+func NewDefaultIssuer(privateKeyPath string) (*DefaultIssuer, error) {
 	// Read the private key file
 	keyBytes, err := os.ReadFile(privateKeyPath)
 	if err != nil {
@@ -27,13 +34,13 @@ func NewIssuer(privateKeyPath string) (*Issuer, error) {
 		return nil, commonjwt.UnableToParsePrivateKeyError
 	}
 
-	return &Issuer{
+	return &DefaultIssuer{
 		key: &key,
 	}, nil
 }
 
 // GenerateClaims generates a new claims object
-func (i *Issuer) GenerateClaims(jwtId string, userId string, expirationTime time.Time) *jwt.MapClaims {
+func (i *DefaultIssuer) GenerateClaims(jwtId string, userId string, expirationTime time.Time) *jwt.MapClaims {
 	return &jwt.MapClaims{
 		"exp": expirationTime.Unix(),
 		"iat": time.Now().Unix(),
@@ -43,7 +50,7 @@ func (i *Issuer) GenerateClaims(jwtId string, userId string, expirationTime time
 }
 
 // IssueToken issues a new token for the given user with the given roles
-func (i *Issuer) IssueToken(claims *jwt.MapClaims) (string, error) {
+func (i *DefaultIssuer) IssueToken(claims *jwt.MapClaims) (string, error) {
 	// Create a new token with the claims
 	token := jwt.NewWithClaims(&jwt.SigningMethodEd25519{}, claims)
 

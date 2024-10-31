@@ -9,13 +9,19 @@ import (
 )
 
 // Validator does parsing and validation of JWT token
-type Validator struct {
-	key            *crypto.PublicKey
-	validateClaims func(*jwt.Token) (*jwt.Token, error)
-}
+type (
+	Validator interface {
+		Validate(tokenString string) (*jwt.Token, error)
+	}
 
-// NewValidator returns a new validator by parsing the given file path as an ED25519 public key
-func NewValidator(publicKeyPath string, validateClaims func(*jwt.Token) (*jwt.Token, error)) (*Validator, error) {
+	DefaultValidator struct {
+		key            *crypto.PublicKey
+		validateClaims func(*jwt.Token) (*jwt.Token, error)
+	}
+)
+
+// NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
+func NewDefaultValidator(publicKeyPath string, validateClaims func(*jwt.Token) (*jwt.Token, error)) (*DefaultValidator, error) {
 	// Read the public key file
 	keyBytes, err := os.ReadFile(publicKeyPath)
 	if err != nil {
@@ -28,14 +34,14 @@ func NewValidator(publicKeyPath string, validateClaims func(*jwt.Token) (*jwt.To
 		return nil, commonjwt.UnableToParsePublicKeyError
 	}
 
-	return &Validator{
+	return &DefaultValidator{
 		key:            &key,
 		validateClaims: validateClaims,
 	}, nil
 }
 
-// GetToken attempts to get a token from the given string
-func (v *Validator) GetToken(tokenString string) (*jwt.Token, error) {
+// Validate parses and validates the given JWT token string
+func (d *DefaultValidator) Validate(tokenString string) (*jwt.Token, error) {
 	// Parse JWT and verify signature
 	token, err := jwt.Parse(
 		tokenString,
@@ -44,7 +50,7 @@ func (v *Validator) GetToken(tokenString string) (*jwt.Token, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodEd25519); !ok {
 				return nil, commonjwt.UnexpectedSigningMethodError
 			}
-			return v.key, nil
+			return d.key, nil
 		})
 	if err != nil {
 		switch {
@@ -64,5 +70,5 @@ func (v *Validator) GetToken(tokenString string) (*jwt.Token, error) {
 	}
 
 	// Validate the token claims with the given function
-	return v.validateClaims(token)
+	return d.validateClaims(token)
 }

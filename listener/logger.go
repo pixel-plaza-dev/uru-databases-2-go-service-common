@@ -1,14 +1,15 @@
 package listener
 
-import "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
+import commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
 
+// Logger is the logger for the listener
 type Logger struct {
-	logger *logger.Logger
+	logger *commonlogger.Logger
 }
 
 // NewLogger creates a new listener logger
-func NewLogger(name string) *Logger {
-	return &Logger{logger: logger.NewLogger(name)}
+func NewLogger(logger *commonlogger.Logger) *Logger {
+	return &Logger{logger: logger}
 }
 
 // ServerStarted logs a success message when the server starts

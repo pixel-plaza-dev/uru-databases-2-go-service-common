@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// ServicePort is the port of the service
 type ServicePort struct {
 	Port          string
 	FormattedPort string

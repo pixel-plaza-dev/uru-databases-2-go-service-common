@@ -12,7 +12,7 @@ func ExtractErrorFromStatus(err error) error {
 	st, ok := status.FromError(err)
 
 	// Check if the error is a status error
-	if ok {
+	if !ok {
 		return commongrpc.InternalServerError
 	}
 

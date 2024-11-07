@@ -10,4 +10,6 @@ var (
 	InvalidTokenError               = errors.New("invalid token")
 	UnableToIssueTokenError         = errors.New("unable to issue token")
 	UnexpectedSigningMethodError    = errors.New("unexpected signing method")
+	InvalidClaimsError              = errors.New("invalid claims")
+	TokenExpiredError               = errors.New("token expired")
 )

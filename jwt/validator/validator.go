@@ -16,13 +16,13 @@ type (
 	}
 
 	DefaultValidator struct {
-		key       *crypto.PublicKey
-		getClaims func(*jwt.Token) (*jwt.MapClaims, error)
+		key            *crypto.PublicKey
+		validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error)
 	}
 )
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
-func NewDefaultValidator(publicKeyPath string, getClaims func(*jwt.Token) (*jwt.MapClaims, error)) (*DefaultValidator, error) {
+func NewDefaultValidator(publicKeyPath string, validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error)) (*DefaultValidator, error) {
 	// Read the public key file
 	keyBytes, err := os.ReadFile(publicKeyPath)
 	if err != nil {
@@ -36,8 +36,8 @@ func NewDefaultValidator(publicKeyPath string, getClaims func(*jwt.Token) (*jwt.
 	}
 
 	return &DefaultValidator{
-		key:       &key,
-		getClaims: getClaims,
+		key:            &key,
+		validateClaims: validateClaims,
 	}, nil
 }
 
@@ -82,6 +82,11 @@ func (d *DefaultValidator) GetClaims(tokenString string) (*jwt.MapClaims, error)
 		return nil, err
 	}
 
-	// Get the claims from the token
-	return d.getClaims(token)
+	// Get token claims
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, commonjwt.InvalidClaimsError
+	}
+
+	return d.validateClaims(&claims)
 }

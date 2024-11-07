@@ -12,19 +12,27 @@ import (
 
 // Interceptor is the interceptor for the authentication
 type Interceptor struct {
-	validator *commonvalidator.Validator
+	validator          *commonvalidator.Validator
+	methodsToIntercept map[string]bool
 }
 
 // NewInterceptor creates a new authentication interceptor
-func NewInterceptor(validator *commonvalidator.Validator) *Interceptor {
+func NewInterceptor(validator *commonvalidator.Validator, methodsToIntercept map[string]bool) *Interceptor {
 	return &Interceptor{
-		validator: validator,
+		validator:          validator,
+		methodsToIntercept: methodsToIntercept,
 	}
 }
 
 // UnaryServerInterceptor return the interceptor function
 func (i *Interceptor) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		// Check if the method should be intercepted
+		intercept, ok := i.methodsToIntercept[info.FullMethod]
+		if !intercept || !ok {
+			return handler(ctx, req)
+		}
+
 		// Get metadata from the context
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {

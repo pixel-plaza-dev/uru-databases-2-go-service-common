@@ -2,18 +2,23 @@ package context
 
 import (
 	"errors"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/flag"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 // ExtractErrorFromStatus extracts the error from the status
-func ExtractErrorFromStatus(err error) error {
+func ExtractErrorFromStatus(flag *commonflag.ModeFlag, err error) error {
 	st, ok := status.FromError(err)
 
 	// Check if the error is a status error
 	if !ok {
-		return commongrpc.InternalServerError
+		// Check the flag mode
+		if flag.IsProd() {
+			return commongrpc.InternalServerError
+		}
+		return err
 	}
 
 	// Check the code

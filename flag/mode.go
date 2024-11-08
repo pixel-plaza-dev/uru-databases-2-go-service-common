@@ -28,6 +28,16 @@ func (m *ModeFlag) Set(value string) error {
 	return fmt.Errorf("invalid value %q, allowed values are: %s", value, strings.Join(m.allowed, ", "))
 }
 
+// IsDev returns true if the mode is development
+func (m *ModeFlag) IsDev() bool {
+	return m.value == ModeDev
+}
+
+// IsProd returns true if the mode is production
+func (m *ModeFlag) IsProd() bool {
+	return m.value == ModeProd
+}
+
 // NewModeFlag creates a new ModeFlag with allowed values
 func NewModeFlag(defaultValue string, allowed []string) *ModeFlag {
 	return &ModeFlag{

@@ -12,12 +12,12 @@ import (
 
 // Interceptor is the interceptor for the authentication
 type Interceptor struct {
-	validator          *commonvalidator.Validator
+	validator          commonvalidator.Validator
 	methodsToIntercept map[string]bool
 }
 
 // NewInterceptor creates a new authentication interceptor
-func NewInterceptor(validator *commonvalidator.Validator, methodsToIntercept map[string]bool) *Interceptor {
+func NewInterceptor(validator commonvalidator.Validator, methodsToIntercept map[string]bool) *Interceptor {
 	return &Interceptor{
 		validator:          validator,
 		methodsToIntercept: methodsToIntercept,

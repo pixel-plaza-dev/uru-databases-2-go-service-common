@@ -4,7 +4,6 @@ import (
 	"crypto"
 	"github.com/golang-jwt/jwt/v5"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/jwt"
-	"os"
 	"time"
 )
 
@@ -21,15 +20,9 @@ type (
 )
 
 // NewDefaultIssuer creates a new issuer by parsing the given path as an ED25519 private key
-func NewDefaultIssuer(privateKeyPath string) (*DefaultIssuer, error) {
-	// Read the private key file
-	keyBytes, err := os.ReadFile(privateKeyPath)
-	if err != nil {
-		return nil, commonjwt.UnableToReadPrivateKeyFileError
-	}
-
+func NewDefaultIssuer(privateKey string) (*DefaultIssuer, error) {
 	// Parse the private key
-	key, err := jwt.ParseEdPrivateKeyFromPEM(keyBytes)
+	key, err := jwt.ParseEdPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
 		return nil, commonjwt.UnableToParsePrivateKeyError
 	}

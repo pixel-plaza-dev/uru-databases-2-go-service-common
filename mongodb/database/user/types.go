@@ -26,6 +26,7 @@ type UserEmail struct {
 	VerifiedAt time.Time          `json:"verified_at,omitempty" bson:"verified_at,omitempty"`
 	RevokedAt  time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 	IsActive   bool               `json:"is_active" bson:"is_active"`
+	IsPrimary  bool               `json:"is_primary" bson:"is_primary"`
 }
 
 // UserPhoneNumber is the MongoDB for the user phone number entity

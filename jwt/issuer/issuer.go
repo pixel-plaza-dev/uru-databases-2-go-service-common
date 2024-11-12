@@ -20,9 +20,9 @@ type (
 )
 
 // NewDefaultIssuer creates a new issuer by parsing the given path as an ED25519 private key
-func NewDefaultIssuer(privateKey string) (*DefaultIssuer, error) {
+func NewDefaultIssuer(privateKey []byte) (*DefaultIssuer, error) {
 	// Parse the private key
-	key, err := jwt.ParseEdPrivateKeyFromPEM([]byte(privateKey))
+	key, err := jwt.ParseEdPrivateKeyFromPEM(privateKey)
 	if err != nil {
 		return nil, commonjwt.UnableToParsePrivateKeyError
 	}

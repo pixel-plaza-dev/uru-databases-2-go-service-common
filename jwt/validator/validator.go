@@ -21,9 +21,9 @@ type (
 )
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
-func NewDefaultValidator(publicKey string, validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error)) (*DefaultValidator, error) {
+func NewDefaultValidator(publicKey []byte, validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error)) (*DefaultValidator, error) {
 	// Parse the public key
-	key, err := jwt.ParseEdPublicKeyFromPEM([]byte(publicKey))
+	key, err := jwt.ParseEdPublicKeyFromPEM(publicKey)
 	if err != nil {
 		return nil, commonjwt.UnableToParsePublicKeyError
 	}

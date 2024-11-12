@@ -13,7 +13,7 @@ type ServicePort struct {
 }
 
 // LoadServicePort load Service port from environment variables
-func LoadServicePort(key string) (servicePort *ServicePort, err error) {
+func LoadServicePort(host string, key string) (servicePort *ServicePort, err error) {
 	// Get environment variable
 	port, exists := os.LookupEnv(key)
 	if !exists {
@@ -22,6 +22,7 @@ func LoadServicePort(key string) (servicePort *ServicePort, err error) {
 
 	// Build port string
 	var portBuilder strings.Builder
+	portBuilder.WriteString(host)
 	portBuilder.WriteString(":")
 	portBuilder.WriteString(port)
 

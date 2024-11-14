@@ -45,6 +45,17 @@ func LoadTLSCredentials(pemServerCAPath string) (credentials.TransportCredential
 	return credentials.NewTLS(config), nil
 }
 
+// LoadSystemCredentials loads the system credentials
+func LoadSystemCredentials() (credentials.TransportCredentials, error) {
+	systemRoots, err := x509.SystemCertPool()
+	if err != nil {
+		return nil, FailedToLoadSystemCredentialsError
+	}
+	return credentials.NewTLS(&tls.Config{
+		RootCAs: systemRoots,
+	}), nil
+}
+
 // LoadServiceAccountCredentials loads the service account credentials
 func LoadServiceAccountCredentials(ctx context.Context, url string) (*oauth.TokenSource, error) {
 	// Use the default service account credentials

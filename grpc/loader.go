@@ -4,7 +4,10 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	enverror "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/env/error"
+	"golang.org/x/net/context"
+	"google.golang.org/api/idtoken"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/oauth"
 	"os"
 )
 
@@ -40,4 +43,15 @@ func LoadTLSCredentials(pemServerCAPath string) (credentials.TransportCredential
 	}
 
 	return credentials.NewTLS(config), nil
+}
+
+// LoadServiceAccountCredentials loads the service account credentials
+func LoadServiceAccountCredentials(ctx context.Context, url string) (*oauth.TokenSource, error) {
+	// Use the default service account credentials
+	ts, err := idtoken.NewTokenSource(ctx, url)
+	if err != nil {
+		return nil, FailedToCreateTokenSourceError
+	}
+
+	return &oauth.TokenSource{TokenSource: ts}, nil
 }

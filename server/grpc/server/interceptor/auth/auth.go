@@ -1,9 +1,9 @@
 package auth
 
 import (
+	"context"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"

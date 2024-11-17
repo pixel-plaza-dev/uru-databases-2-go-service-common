@@ -1,10 +1,9 @@
 package context
 
 import (
+	"context"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc/metadata"
 	"strings"
 )
 
@@ -60,7 +59,7 @@ func GetCtxWithMetadata(
 ) context.Context {
 	// Add the metadata to the context
 	for _, field := range ctxMetadata.MetadataFields {
-		ctx = metadata.AppendToOutgoingContext(ctx, field.Key, field.Value)
+		ctx = context.WithValue(ctx, field.Key, field.Value)
 	}
 	return ctx
 }

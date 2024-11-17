@@ -60,7 +60,7 @@ func GetCtxWithMetadata(
 ) context.Context {
 	// Add the metadata to the context
 	for _, field := range ctxMetadata.MetadataFields {
-		metadata.AppendToOutgoingContext(ctx, field.Key, field.Value)
+		ctx = metadata.AppendToOutgoingContext(ctx, field.Key, field.Value)
 	}
 	return ctx
 }

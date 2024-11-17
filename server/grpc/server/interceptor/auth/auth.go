@@ -4,6 +4,7 @@ import (
 	"context"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
+	context2 "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/server/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -11,11 +12,18 @@ import (
 	"strings"
 )
 
-// Interceptor is the interceptor for the authentication
-type Interceptor struct {
-	validator          commonvalidator.Validator
-	methodsToIntercept map[string]bool
-}
+type (
+	// Authentication interface
+	Authentication interface {
+		Authenticate() grpc.UnaryServerInterceptor
+	}
+
+	// Interceptor is the interceptor for the authentication
+	Interceptor struct {
+		validator          commonvalidator.Validator
+		methodsToIntercept map[string]bool
+	}
+)
 
 // NewInterceptor creates a new authentication interceptor
 func NewInterceptor(
@@ -28,7 +36,7 @@ func NewInterceptor(
 }
 
 // GetTokenFromMetadata gets the token from the metadata
-func GetTokenFromMetadata(md metadata.MD) (string, error) {
+func (i *Interceptor) GetTokenFromMetadata(md metadata.MD) (string, error) {
 	// Get the authorization from the metadata
 	authorization := md.Get(commongrpc.AuthorizationMetadataKey)
 	tokenIdx := commongrpc.TokenIdx.Int()
@@ -50,14 +58,26 @@ func GetTokenFromMetadata(md metadata.MD) (string, error) {
 	return authorizationFields[1], nil
 }
 
-// UnaryServerInterceptor return the interceptor function
-func (i *Interceptor) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
+// GetMethodName gets the method name from the full method
+func (i *Interceptor) GetMethodName(fullMethod string) string {
+	parts := strings.Split(fullMethod, "/")
+	if len(parts) < 3 {
+		return ""
+	}
+	return parts[2]
+}
+
+// Authenticate returns the authentication interceptor
+func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
+		// Get method name
+		methodName := i.GetMethodName(info.FullMethod)
+
 		// Check if the method should be intercepted
-		intercept, ok := i.methodsToIntercept[info.FullMethod]
+		intercept, ok := i.methodsToIntercept[methodName]
 		if !intercept || !ok {
 			return handler(ctx, req)
 		}
@@ -69,7 +89,7 @@ func (i *Interceptor) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		}
 
 		// Get the token from the metadata
-		tokenString, err := GetTokenFromMetadata(md)
+		tokenString, err := i.GetTokenFromMetadata(md)
 		if err != nil {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
@@ -81,7 +101,7 @@ func (i *Interceptor) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		}
 
 		// Set the claims in the context
-		ctx = commongrpc.SetContextClaims(&ctx, claims)
+		ctx = context2.SetCtxClaims(&ctx, claims)
 
 		return handler(ctx, req)
 	}

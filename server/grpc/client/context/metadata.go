@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+type (
+// Metadata
+)
+
 // MetadataField is a field in the metadata
 type MetadataField struct {
 	Key   string

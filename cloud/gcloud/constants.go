@@ -13,5 +13,5 @@ func (i AuthorizationIdx) Int() int {
 
 const (
 	// AuthorizationMetadataKey is the key of the authorization metadata
-	AuthorizationMetadataKey = "X-Serverless-Authorization"
+	AuthorizationMetadataKey = "x-serverless-authorization"
 )

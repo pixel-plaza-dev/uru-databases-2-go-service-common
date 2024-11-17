@@ -5,6 +5,7 @@ import (
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
+	"strings"
 )
 
 // MetadataField is a field in the metadata
@@ -24,7 +25,7 @@ func NewCtxMetadata(metadataFields map[string]string) *CtxMetadata {
 
 	// Add the metadata fields
 	for key, value := range metadataFields {
-		fields = append(fields, MetadataField{Key: key, Value: value})
+		fields = append(fields, MetadataField{Key: strings.ToLower(key), Value: value})
 	}
 
 	return &CtxMetadata{

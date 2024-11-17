@@ -13,7 +13,7 @@ func (i AuthorizationIdx) Int() int {
 
 const (
 	// AuthorizationMetadataKey is the key for the authorization metadata
-	AuthorizationMetadataKey = "Authorization"
+	AuthorizationMetadataKey = "authorization"
 
 	// BearerPrefix is the prefix for the bearer token
 	BearerPrefix = "Bearer"

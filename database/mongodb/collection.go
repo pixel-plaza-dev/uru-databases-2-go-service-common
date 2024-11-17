@@ -53,11 +53,16 @@ type CompoundFieldIndex struct {
 }
 
 // NewCompoundFieldIndex creates a new compound field index
-func NewCompoundFieldIndex(fieldIndexes []*FieldIndex, unique bool) *CompoundFieldIndex {
+func NewCompoundFieldIndex(
+	fieldIndexes []*FieldIndex, unique bool,
+) *CompoundFieldIndex {
 	// Create the keys
 	keys := bson.D{}
 	for _, fieldIndex := range fieldIndexes {
-		keys = append(keys, bson.E{Key: fieldIndex.Name, Value: fieldIndex.Order.OrderInt()})
+		keys = append(
+			keys,
+			bson.E{Key: fieldIndex.Name, Value: fieldIndex.Order.OrderInt()},
+		)
 	}
 
 	// Create the index model
@@ -76,12 +81,20 @@ type Collection struct {
 }
 
 // NewCollection creates a new MongoDB collection
-func NewCollection(name string, singleFieldIndexes *[]*SingleFieldIndex, compoundIndexes *[]*CompoundFieldIndex) *Collection {
-	return &Collection{Name: name, SingleFieldIndexes: singleFieldIndexes, CompoundIndexes: compoundIndexes}
+func NewCollection(
+	name string, singleFieldIndexes *[]*SingleFieldIndex,
+	compoundIndexes *[]*CompoundFieldIndex,
+) *Collection {
+	return &Collection{
+		Name: name, SingleFieldIndexes: singleFieldIndexes,
+		CompoundIndexes: compoundIndexes,
+	}
 }
 
 // CreateCollection creates the collection
-func (c *Collection) CreateCollection(database *mongo.Database) (collection *mongo.Collection, err error) {
+func (c *Collection) CreateCollection(database *mongo.Database) (
+	collection *mongo.Collection, err error,
+) {
 	// Get the collection
 	collection = database.Collection(c.Name)
 
@@ -98,7 +111,9 @@ func (c *Collection) createIndexes(collection *mongo.Collection) (err error) {
 	// Create the single field indexes
 	if c.SingleFieldIndexes != nil {
 		for _, singleFieldIndex := range *c.SingleFieldIndexes {
-			_, err = collection.Indexes().CreateOne(context.Background(), *singleFieldIndex.Model)
+			_, err = collection.Indexes().CreateOne(
+				context.Background(), *singleFieldIndex.Model,
+			)
 			if err != nil {
 				return FailedToCreateSingleFieldIndexError
 			}
@@ -108,7 +123,9 @@ func (c *Collection) createIndexes(collection *mongo.Collection) (err error) {
 	// Create the compound indexes
 	if c.CompoundIndexes != nil {
 		for _, compoundIndex := range *c.CompoundIndexes {
-			if _, err = collection.Indexes().CreateOne(context.Background(), *compoundIndex.Model); err != nil {
+			if _, err = collection.Indexes().CreateOne(
+				context.Background(), *compoundIndex.Model,
+			); err != nil {
 				return FailedToCreateCompoundIndexError
 			}
 		}

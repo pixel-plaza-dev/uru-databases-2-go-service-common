@@ -8,6 +8,4 @@ var (
 	Unauthenticated                   = errors.New("unauthenticated")
 	Unauthorized                      = errors.New("unauthorized")
 	AuthorizationMetadataInvalidError = errors.New("authorization metadata invalid")
-	MissingBearerPrefixError          = errors.New("missing bearer prefix")
-	MissingBearerTokenError           = errors.New("missing bearer token")
 )

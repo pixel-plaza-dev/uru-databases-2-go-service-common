@@ -34,21 +34,29 @@ func NewCtxMetadata(metadataFields map[string]string) *CtxMetadata {
 
 // NewUnauthenticatedCtxMetadata creates a new unauthenticated CtxMetadata
 func NewUnauthenticatedCtxMetadata(gcloudToken string) *CtxMetadata {
-	return NewCtxMetadata(map[string]string{
-		commongcloud.AuthorizationMetadataKey: commongrpc.BearerPrefix + " " + gcloudToken,
-	})
+	return NewCtxMetadata(
+		map[string]string{
+			commongcloud.AuthorizationMetadataKey: commongrpc.BearerPrefix + " " + gcloudToken,
+		},
+	)
 }
 
 // NewAuthenticatedCtxMetadata creates a new authenticated CtxMetadata
-func NewAuthenticatedCtxMetadata(gcloudToken string, jwtToken string) *CtxMetadata {
-	return NewCtxMetadata(map[string]string{
-		commongcloud.AuthorizationMetadataKey: commongrpc.BearerPrefix + " " + gcloudToken,
-		commongrpc.AuthorizationMetadataKey:   commongrpc.BearerPrefix + " " + jwtToken,
-	})
+func NewAuthenticatedCtxMetadata(
+	gcloudToken string, jwtToken string,
+) *CtxMetadata {
+	return NewCtxMetadata(
+		map[string]string{
+			commongcloud.AuthorizationMetadataKey: commongrpc.BearerPrefix + " " + gcloudToken,
+			commongrpc.AuthorizationMetadataKey:   commongrpc.BearerPrefix + " " + jwtToken,
+		},
+	)
 }
 
 // GetCtxWithMetadata gets the context with the metadata
-func GetCtxWithMetadata(ctxMetadata *CtxMetadata, ctx context.Context) context.Context {
+func GetCtxWithMetadata(
+	ctxMetadata *CtxMetadata, ctx context.Context,
+) context.Context {
 	// Add the metadata to the context
 	for _, field := range ctxMetadata.MetadataFields {
 		ctx = metadata.AppendToOutgoingContext(ctx, field.Key, field.Value)

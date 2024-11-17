@@ -21,7 +21,10 @@ type (
 )
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
-func NewDefaultValidator(publicKey []byte, validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error)) (*DefaultValidator, error) {
+func NewDefaultValidator(
+	publicKey []byte,
+	validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error),
+) (*DefaultValidator, error) {
 	// Parse the public key
 	key, err := jwt.ParseEdPublicKeyFromPEM(publicKey)
 	if err != nil {
@@ -45,7 +48,8 @@ func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 				return nil, commonjwt.UnexpectedSigningMethodError
 			}
 			return d.key, nil
-		})
+		},
+	)
 	if err != nil {
 		switch {
 		case errors.Is(err, commonjwt.UnexpectedSigningMethodError):
@@ -68,7 +72,9 @@ func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 }
 
 // GetClaims parses and validates the given JWT token string
-func (d *DefaultValidator) GetClaims(tokenString string) (*jwt.MapClaims, error) {
+func (d *DefaultValidator) GetClaims(tokenString string) (
+	*jwt.MapClaims, error,
+) {
 	// Get the token
 	token, err := d.GetToken(tokenString)
 	if err != nil {

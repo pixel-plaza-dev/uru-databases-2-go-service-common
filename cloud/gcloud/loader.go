@@ -7,7 +7,9 @@ import (
 )
 
 // LoadServiceAccountCredentials loads the service account credentials
-func LoadServiceAccountCredentials(ctx context.Context, url string) (*oauth.TokenSource, error) {
+func LoadServiceAccountCredentials(
+	ctx context.Context, url string,
+) (*oauth.TokenSource, error) {
 	// Use the default service account credentials
 	ts, err := idtoken.NewTokenSource(ctx, url)
 	if err != nil {

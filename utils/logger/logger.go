@@ -34,9 +34,13 @@ func (d DefaultLogger) BuildMessage(message string) string {
 }
 
 // BuildMessageWithDetails creates a string that contains a message with details
-func (d DefaultLogger) BuildMessageWithDetails(message string, details string) string {
+func (d DefaultLogger) BuildMessageWithDetails(
+	message string, details string,
+) string {
 	formattedDetails := utils.AddBrackets(details)
-	return strings.Join([]string{d.FormattedName, message, formattedDetails}, " ")
+	return strings.Join(
+		[]string{d.FormattedName, message, formattedDetails}, " ",
+	)
 }
 
 // LogMessage logs a message

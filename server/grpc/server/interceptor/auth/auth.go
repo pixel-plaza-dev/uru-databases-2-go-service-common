@@ -18,7 +18,9 @@ type Interceptor struct {
 }
 
 // NewInterceptor creates a new authentication interceptor
-func NewInterceptor(validator commonvalidator.Validator, methodsToIntercept map[string]bool) *Interceptor {
+func NewInterceptor(
+	validator commonvalidator.Validator, methodsToIntercept map[string]bool,
+) *Interceptor {
 	return &Interceptor{
 		validator:          validator,
 		methodsToIntercept: methodsToIntercept,
@@ -41,13 +43,8 @@ func GetTokenFromMetadata(md metadata.MD) (string, error) {
 	authorizationFields := strings.Split(authorizationValue, " ")
 
 	// Check if the authorization value is valid
-	if len(authorizationFields) != 2 {
+	if len(authorizationFields) != 2 || authorizationFields[0] != commongrpc.BearerPrefix {
 		return "", commongrpc.AuthorizationMetadataInvalidError
-	}
-
-	// Check the first field
-	if authorizationFields[0] != commongrpc.BearerPrefix {
-		return "", commongrpc.MissingBearerPrefixError
 	}
 
 	return authorizationFields[1], nil
@@ -55,7 +52,10 @@ func GetTokenFromMetadata(md metadata.MD) (string, error) {
 
 // UnaryServerInterceptor return the interceptor function
 func (i *Interceptor) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(
+		ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (interface{}, error) {
 		// Check if the method should be intercepted
 		intercept, ok := i.methodsToIntercept[info.FullMethod]
 		if !intercept || !ok {

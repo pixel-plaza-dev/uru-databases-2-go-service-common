@@ -13,7 +13,9 @@ type ServicePort struct {
 }
 
 // LoadServicePort load Service port from environment variables
-func LoadServicePort(host string, key string) (servicePort *ServicePort, err error) {
+func LoadServicePort(host string, key string) (
+	servicePort *ServicePort, err error,
+) {
 	// Get environment variable
 	port, exists := os.LookupEnv(key)
 	if !exists {

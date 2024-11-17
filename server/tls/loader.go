@@ -8,7 +8,9 @@ import (
 )
 
 // LoadTLSCredentials loads the TLS credentials
-func LoadTLSCredentials(pemServerCAPath string) (credentials.TransportCredentials, error) {
+func LoadTLSCredentials(pemServerCAPath string) (
+	credentials.TransportCredentials, error,
+) {
 	// Load certificate of the CA who signed server's certificate
 	pemServerCA, err := os.ReadFile(pemServerCAPath)
 	if err != nil {
@@ -36,7 +38,9 @@ func LoadSystemCredentials() (credentials.TransportCredentials, error) {
 	if err != nil {
 		return nil, FailedToLoadSystemCredentialsError
 	}
-	return credentials.NewTLS(&tls.Config{
-		RootCAs: systemRoots,
-	}), nil
+	return credentials.NewTLS(
+		&tls.Config{
+			RootCAs: systemRoots,
+		},
+	), nil
 }

@@ -25,7 +25,10 @@ func (m *ModeFlag) Set(value string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("invalid value %q, allowed values are: %s", value, strings.Join(m.allowed, ", "))
+	return fmt.Errorf(
+		"invalid value %q, allowed values are: %s", value,
+		strings.Join(m.allowed, ", "),
+	)
 }
 
 // IsDev returns true if the mode is development
@@ -59,5 +62,8 @@ var Mode = NewModeFlag(ModeDev, []string{ModeDev, ModeProd})
 
 // SetModeFlag sets the mode flag
 func SetModeFlag() {
-	flag.Var(Mode, "m", "Specify mode. Allowed values are: dev, prod. Default is the development mode")
+	flag.Var(
+		Mode, "m",
+		"Specify mode. Allowed values are: dev, prod. Default is the development mode",
+	)
 }

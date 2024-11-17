@@ -6,6 +6,6 @@ import (
 )
 
 var (
-	MetadataNotProvidedError            = status.Error(codes.Unauthenticated, "metadata is not provided")
-	AuthorizationHeaderNotProvidedError = status.Error(codes.Unauthenticated, "authorization header is not provided")
+	MetadataNotProvidedError              = status.Error(codes.Unauthenticated, "metadata is not provided")
+	AuthorizationMetadataNotProvidedError = status.Error(codes.Unauthenticated, "authorization metadata is not provided")
 )

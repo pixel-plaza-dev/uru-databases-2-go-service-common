@@ -12,8 +12,11 @@ func (i AuthorizationIdx) Int() int {
 }
 
 const (
-	// AuthorizationHeaderKey is the key for the authorization header
-	AuthorizationHeaderKey = "authorization"
+	// AuthorizationMetadataKey is the key for the authorization metadata
+	AuthorizationMetadataKey = "Authorization"
+
+	// BearerPrefix is the prefix for the bearer token
+	BearerPrefix = "Bearer"
 
 	// JwtCtxClaimsKey is the key for the JWT context claims
 	JwtCtxClaimsKey = "jwt_claims"

@@ -2,12 +2,13 @@ package auth
 
 import (
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
-	grpc2 "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"strings"
 )
 
 // Interceptor is the interceptor for the authentication
@@ -22,6 +23,34 @@ func NewInterceptor(validator commonvalidator.Validator, methodsToIntercept map[
 		validator:          validator,
 		methodsToIntercept: methodsToIntercept,
 	}
+}
+
+// GetTokenFromMetadata gets the token from the metadata
+func GetTokenFromMetadata(md metadata.MD) (string, error) {
+	// Get the authorization from the metadata
+	authorization := md.Get(commongrpc.AuthorizationMetadataKey)
+	tokenIdx := commongrpc.TokenIdx.Int()
+	if len(authorization) <= tokenIdx {
+		return "", AuthorizationMetadataNotProvidedError
+	}
+
+	// Get the authorization value from the metadata
+	authorizationValue := authorization[tokenIdx]
+
+	// Split the authorization value by space
+	authorizationFields := strings.Split(authorizationValue, " ")
+
+	// Check if the authorization value is valid
+	if len(authorizationFields) != 2 {
+		return "", commongrpc.AuthorizationMetadataInvalidError
+	}
+
+	// Check the first field
+	if authorizationFields[0] != commongrpc.BearerPrefix {
+		return "", commongrpc.MissingBearerPrefixError
+	}
+
+	return authorizationFields[1], nil
 }
 
 // UnaryServerInterceptor return the interceptor function
@@ -39,15 +68,11 @@ func (i *Interceptor) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			return nil, MetadataNotProvidedError
 		}
 
-		// Get the authorization from the metadata
-		authorization := md.Get(grpc2.AuthorizationHeaderKey)
-		tokenIdx := grpc2.TokenIdx.Int()
-		if len(authorization) <= tokenIdx {
-			return nil, AuthorizationHeaderNotProvidedError
-		}
-
 		// Get the token from the metadata
-		tokenString := authorization[tokenIdx]
+		tokenString, err := GetTokenFromMetadata(md)
+		if err != nil {
+			return nil, status.Error(codes.Unauthenticated, err.Error())
+		}
 
 		// Validate the token and get the claims
 		claims, err := i.validator.GetClaims(tokenString)
@@ -56,7 +81,7 @@ func (i *Interceptor) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		}
 
 		// Set the claims in the context
-		ctx = grpc2.SetContextClaims(&ctx, claims)
+		ctx = commongrpc.SetContextClaims(&ctx, claims)
 
 		return handler(ctx, req)
 	}

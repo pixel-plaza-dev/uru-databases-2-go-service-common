@@ -19,10 +19,10 @@ func LoadServiceAccountCredentials(
 	}
 
 	// Use the default service account credentials
-	ts, err := idtoken.NewTokenSource(ctx, url, option.WithCredentials(credentials))
+	tokenSource, err := idtoken.NewTokenSource(ctx, url, option.WithCredentials(credentials))
 	if err != nil {
 		return nil, nil, FailedToCreateTokenSourceError
 	}
 
-	return credentials, &oauth.TokenSource{TokenSource: ts}, nil
+	return credentials, &oauth.TokenSource{TokenSource: tokenSource}, nil
 }

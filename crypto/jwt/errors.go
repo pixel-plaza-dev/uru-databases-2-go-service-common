@@ -11,4 +11,5 @@ var (
 	UnexpectedSigningMethodError = errors.New("unexpected signing method")
 	InvalidClaimsError           = errors.New("invalid claims")
 	TokenExpiredError            = errors.New("token expired")
+	TokenNotValidYetError        = errors.New("token not valid yet")
 )

@@ -55,6 +55,7 @@ func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 		case errors.Is(err, commonjwt.UnexpectedSigningMethodError):
 		case errors.Is(err, jwt.ErrSignatureInvalid):
 		case errors.Is(err, jwt.ErrTokenExpired):
+		case errors.Is(err, jwt.ErrTokenNotValidYet):
 		case errors.Is(err, jwt.ErrTokenMalformed):
 			return nil, err
 		default:

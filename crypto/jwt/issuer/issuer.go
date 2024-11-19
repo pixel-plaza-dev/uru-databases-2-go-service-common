@@ -34,13 +34,14 @@ func NewDefaultIssuer(privateKey []byte) (*DefaultIssuer, error) {
 
 // GenerateClaims generates a new claims object
 func (i *DefaultIssuer) GenerateClaims(
-	jwtId string, userId string, expirationTime time.Time,
+	jwtId string, userId string, expirationTime time.Time, isRefreshToken bool,
 ) *jwt.MapClaims {
 	return &jwt.MapClaims{
-		"exp": expirationTime.Unix(),
-		"iat": time.Now().Unix(),
-		"jti": jwtId,
-		"sub": userId,
+		"exp":                         expirationTime.Unix(),
+		"iat":                         time.Now().Unix(),
+		"jti":                         jwtId,
+		"sub":                         userId,
+		commonjwt.IsRefreshTokenClaim: isRefreshToken,
 	}
 }
 

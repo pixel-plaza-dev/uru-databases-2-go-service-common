@@ -62,9 +62,12 @@ func NewAuthenticatedCtxMetadata(
 func GetCtxWithMetadata(
 	ctxMetadata *CtxMetadata, ctx context.Context,
 ) context.Context {
+	// Create metadata
+	md := metadata.Pairs()
+
 	// Add the metadata to the context
 	for _, field := range ctxMetadata.MetadataFields {
-		ctx = metadata.AppendToOutgoingContext(ctx, field.Key, field.Value)
+		md.Append(field.Key, field.Value)
 	}
-	return ctx
+	return metadata.NewOutgoingContext(ctx, md)
 }

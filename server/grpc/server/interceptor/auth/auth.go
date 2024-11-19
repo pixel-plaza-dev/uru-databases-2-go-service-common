@@ -4,7 +4,7 @@ import (
 	"context"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
-	context2 "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/server/context"
+	grpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/server/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -68,7 +68,7 @@ func (i *Interceptor) GetMethodName(fullMethod string) string {
 }
 
 // Authenticate returns the authentication interceptor
-func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
+func (i *Interceptor) Authenticate(mustBeRefreshToken bool) grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
@@ -94,14 +94,14 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
 
-		// Validate the token and get the claims
-		claims, err := i.validator.GetClaims(tokenString)
+		// Validate the token and get the validated claims
+		claims, err := i.validator.GetValidatedClaims(tokenString, mustBeRefreshToken)
 		if err != nil {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
 
 		// Set the claims in the context
-		ctx = context2.SetCtxClaims(&ctx, claims)
+		ctx = grpcctx.SetCtxClaims(&ctx, claims)
 
 		return handler(ctx, req)
 	}

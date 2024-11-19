@@ -12,18 +12,18 @@ type (
 	Validator interface {
 		GetToken(tokenString string) (*jwt.Token, error)
 		GetClaims(tokenString string) (*jwt.MapClaims, error)
+		GetValidatedClaims(tokenString string, mustBeRefreshToken bool) (*jwt.MapClaims, error)
 	}
 
 	DefaultValidator struct {
-		key            *crypto.PublicKey
-		validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error)
+		key          *crypto.PublicKey
+		isTokenValid func(isRefreshToken bool) bool
 	}
 )
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
 func NewDefaultValidator(
-	publicKey []byte,
-	validateClaims func(*jwt.MapClaims) (*jwt.MapClaims, error),
+	publicKey []byte, isTokenValid func(isRefreshToken bool) bool,
 ) (*DefaultValidator, error) {
 	// Parse the public key
 	key, err := jwt.ParseEdPublicKeyFromPEM(publicKey)
@@ -32,8 +32,8 @@ func NewDefaultValidator(
 	}
 
 	return &DefaultValidator{
-		key:            &key,
-		validateClaims: validateClaims,
+		key:          &key,
+		isTokenValid: isTokenValid,
 	}, nil
 }
 
@@ -72,6 +72,30 @@ func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 	return token, nil
 }
 
+// ValidateClaims validates the given claims
+func (d *DefaultValidator) ValidateClaims(claims *jwt.MapClaims, mustBeRefreshToken bool) (*jwt.MapClaims, error) {
+	// Check if is a refresh token
+	irt, ok := (*claims)[commonjwt.IsRefreshTokenClaim].(bool)
+	if !ok {
+		return nil, commonjwt.IRTNotValidError
+	}
+
+	// Check if it must be a refresh token
+	if irt != mustBeRefreshToken {
+		if mustBeRefreshToken {
+			return nil, commonjwt.MustBeRefreshTokenError
+		}
+		return nil, commonjwt.MustBeAccessTokenError
+	}
+
+	// Check if the token is valid
+	if !d.isTokenValid(irt) {
+		return nil, commonjwt.InvalidTokenError
+	}
+
+	return claims, nil
+}
+
 // GetClaims parses and validates the given JWT token string
 func (d *DefaultValidator) GetClaims(tokenString string) (
 	*jwt.MapClaims, error,
@@ -88,5 +112,19 @@ func (d *DefaultValidator) GetClaims(tokenString string) (
 		return nil, commonjwt.InvalidClaimsError
 	}
 
-	return d.validateClaims(&claims)
+	return &claims, nil
+}
+
+// GetValidatedClaims parses, validates and returns the claims of the given JWT token string
+func (d *DefaultValidator) GetValidatedClaims(tokenString string, mustBeRefreshToken bool) (
+	*jwt.MapClaims, error,
+) {
+	// Get the claims
+	claims, err := d.GetClaims(tokenString)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the claims
+	return d.ValidateClaims(claims, mustBeRefreshToken)
 }

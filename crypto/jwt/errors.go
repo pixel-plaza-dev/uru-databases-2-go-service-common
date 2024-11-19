@@ -12,4 +12,7 @@ var (
 	InvalidClaimsError           = errors.New("invalid claims")
 	TokenExpiredError            = errors.New("token expired")
 	TokenNotValidYetError        = errors.New("token not valid yet")
+	IRTNotValidError             = errors.New("irt not valid")
+	MustBeAccessTokenError       = errors.New("must be access token")
+	MustBeRefreshTokenError      = errors.New("must be refresh token")
 )

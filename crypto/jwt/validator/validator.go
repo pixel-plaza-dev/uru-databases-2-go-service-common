@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
+	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
 )
 
 // Validator does parsing and validation of JWT token
@@ -15,15 +16,16 @@ type (
 		GetValidatedClaims(token string, mustBeRefreshToken bool) (*jwt.MapClaims, error)
 	}
 
+	// DefaultValidator struct
 	DefaultValidator struct {
-		key          *crypto.PublicKey
-		isTokenValid func(token string, isRefreshToken bool) bool
+		key            *crypto.PublicKey
+		TokenValidator commonjwtvalidatorgrpc.TokenValidator
 	}
 )
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
 func NewDefaultValidator(
-	publicKey []byte, isTokenValid func(token string, isRefreshToken bool) bool,
+	publicKey []byte, isTokenValid commonjwtvalidatorgrpc.TokenValidator,
 ) (*DefaultValidator, error) {
 	// Parse the public key
 	key, err := jwt.ParseEdPublicKeyFromPEM(publicKey)
@@ -32,8 +34,8 @@ func NewDefaultValidator(
 	}
 
 	return &DefaultValidator{
-		key:          &key,
-		isTokenValid: isTokenValid,
+		key:            &key,
+		TokenValidator: isTokenValid,
 	}, nil
 }
 
@@ -108,7 +110,7 @@ func (d *DefaultValidator) ValidateClaims(token string, claims *jwt.MapClaims, m
 	}
 
 	// Check if the token is valid
-	if !d.isTokenValid(token, irt) {
+	if !d.TokenValidator.IsTokenValid(token, irt) {
 		return nil, commonjwt.InvalidTokenError
 	}
 

@@ -76,7 +76,8 @@ func (i *Interceptor) Authenticate(mustBeRefreshToken bool) grpc.UnaryServerInte
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
 
-		// Set the token claims to the context
+		// Set the token string and token claims to the context
+		ctx = commongrpcserverctx.SetCtxTokenString(ctx, tokenString)
 		ctx = commongrpcserverctx.SetCtxTokenClaims(ctx, claims)
 
 		return handler(ctx, req)

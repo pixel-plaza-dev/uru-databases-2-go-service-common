@@ -61,10 +61,11 @@ func (i *Interceptor) Authenticate() grpc.UnaryClientInterceptor {
 		invoker grpc.UnaryInvoker,
 		opts ...grpc.CallOption,
 	) error {
-		var ctxMetadata *commongrpcctx.CtxMetadata
-
 		// Get the JWT token
 		jwtToken, err := i.GetCtxTokenString(ctx)
+
+		// Create the context metadata
+		var ctxMetadata *commongrpcctx.CtxMetadata
 		if err == nil {
 			// Create the authenticated context metadata
 			ctxMetadata = commongrpcctx.NewAuthenticatedCtxMetadata(

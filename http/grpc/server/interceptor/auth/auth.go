@@ -4,6 +4,7 @@ import (
 	"context"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpcserverctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/server/context"
+	pbdetails "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -20,13 +21,13 @@ type (
 	// Interceptor is the interceptor for the authentication
 	Interceptor struct {
 		validator          commonvalidator.Validator
-		methodsToIntercept map[string]bool
+		methodsToIntercept map[string]pbdetails.Interception
 	}
 )
 
 // NewInterceptor creates a new authentication interceptor
 func NewInterceptor(
-	validator commonvalidator.Validator, methodsToIntercept map[string]bool,
+	validator commonvalidator.Validator, methodsToIntercept map[string]pbdetails.Interception,
 ) *Interceptor {
 	return &Interceptor{
 		validator:          validator,
@@ -44,7 +45,7 @@ func (i *Interceptor) GetMethodName(fullMethod string) string {
 }
 
 // Authenticate returns the authentication interceptor
-func (i *Interceptor) Authenticate(mustBeRefreshToken bool) grpc.UnaryServerInterceptor {
+func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
@@ -53,8 +54,8 @@ func (i *Interceptor) Authenticate(mustBeRefreshToken bool) grpc.UnaryServerInte
 		methodName := i.GetMethodName(info.FullMethod)
 
 		// Check if the method should be intercepted
-		intercept, ok := i.methodsToIntercept[methodName]
-		if !intercept || !ok {
+		interception, ok := i.methodsToIntercept[methodName]
+		if !ok || interception == pbdetails.None {
 			return handler(ctx, req)
 		}
 
@@ -71,7 +72,7 @@ func (i *Interceptor) Authenticate(mustBeRefreshToken bool) grpc.UnaryServerInte
 		}
 
 		// Validate the token and get the validated claims
-		claims, err := i.validator.GetValidatedClaims(tokenString, mustBeRefreshToken)
+		claims, err := i.validator.GetValidatedClaims(tokenString, interception)
 		if err != nil {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}

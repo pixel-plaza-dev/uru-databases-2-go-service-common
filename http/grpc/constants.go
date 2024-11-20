@@ -18,6 +18,10 @@ const (
 	// BearerPrefix is the prefix for the bearer token
 	BearerPrefix = "Bearer"
 
-	// CtxTokenClaimsKey is the key for the JWT context claims
-	CtxTokenClaimsKey = "jwt_claims"
+	// CtxToken
+	//
+	//ClaimsKey is the key for the JWT context claims
+	CtxToken
+
+	ClaimsKey = "jwt_claims"
 )

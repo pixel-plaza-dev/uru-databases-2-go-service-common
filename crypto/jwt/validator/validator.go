@@ -6,6 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
+	pbdetails "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details"
 )
 
 // Validator does parsing and validation of JWT token
@@ -13,7 +14,7 @@ type (
 	Validator interface {
 		GetToken(tokenString string) (*jwt.Token, error)
 		GetClaims(tokenString string) (*jwt.MapClaims, error)
-		GetValidatedClaims(token string, mustBeRefreshToken bool) (*jwt.MapClaims, error)
+		GetValidatedClaims(token string, interception pbdetails.Interception) (*jwt.MapClaims, error)
 	}
 
 	// DefaultValidator struct
@@ -94,7 +95,7 @@ func (d *DefaultValidator) GetClaims(tokenString string) (
 }
 
 // ValidateClaims validates the given claims
-func (d *DefaultValidator) ValidateClaims(token string, claims *jwt.MapClaims, mustBeRefreshToken bool) (*jwt.MapClaims, error) {
+func (d *DefaultValidator) ValidateClaims(token string, claims *jwt.MapClaims, interception pbdetails.Interception) (*jwt.MapClaims, error) {
 	// Check if is a refresh token
 	irt, ok := (*claims)[commonjwt.IsRefreshTokenClaim].(bool)
 	if !ok {
@@ -102,10 +103,12 @@ func (d *DefaultValidator) ValidateClaims(token string, claims *jwt.MapClaims, m
 	}
 
 	// Check if it must be a refresh token
-	if irt != mustBeRefreshToken {
-		if mustBeRefreshToken {
-			return nil, commonjwt.MustBeRefreshTokenError
-		}
+	if !irt && interception == pbdetails.RefreshToken {
+		return nil, commonjwt.MustBeRefreshTokenError
+	}
+
+	// Check if it must be an access token
+	if irt && interception == pbdetails.AccessToken {
 		return nil, commonjwt.MustBeAccessTokenError
 	}
 
@@ -118,7 +121,7 @@ func (d *DefaultValidator) ValidateClaims(token string, claims *jwt.MapClaims, m
 }
 
 // GetValidatedClaims parses, validates and returns the claims of the given JWT token string
-func (d *DefaultValidator) GetValidatedClaims(token string, mustBeRefreshToken bool) (
+func (d *DefaultValidator) GetValidatedClaims(token string, interception pbdetails.Interception) (
 	*jwt.MapClaims, error,
 ) {
 	// Get the claims
@@ -128,5 +131,5 @@ func (d *DefaultValidator) GetValidatedClaims(token string, mustBeRefreshToken b
 	}
 
 	// Validate the claims
-	return d.ValidateClaims(token, claims, mustBeRefreshToken)
+	return d.ValidateClaims(token, claims, interception)
 }

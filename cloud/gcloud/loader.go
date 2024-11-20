@@ -20,11 +20,11 @@ func LoadGoogleCredentials(ctx context.Context) (*google.Credentials, error) {
 // LoadServiceAccountCredentials loads the service account credentials
 func LoadServiceAccountCredentials(
 	ctx context.Context, url string, credentials *google.Credentials,
-) (*google.Credentials, *oauth.TokenSource, error) {
+) (*oauth.TokenSource, error) {
 	tokenSource, err := idtoken.NewTokenSource(ctx, url, option.WithCredentials(credentials))
 	if err != nil {
-		return nil, nil, FailedToCreateTokenSourceError
+		return nil, FailedToCreateTokenSourceError
 	}
 
-	return credentials, &oauth.TokenSource{TokenSource: tokenSource}, nil
+	return &oauth.TokenSource{TokenSource: tokenSource}, nil
 }

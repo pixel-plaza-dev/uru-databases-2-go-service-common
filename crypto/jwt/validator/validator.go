@@ -29,7 +29,7 @@ type (
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
 func NewDefaultValidator(
-	publicKey []byte, isTokenValid commonjwtvalidatorgrpc.TokenValidator,
+	publicKey []byte, tokenValidator commonjwtvalidatorgrpc.TokenValidator,
 ) (*DefaultValidator, error) {
 	// Parse the public key
 	key, err := jwt.ParseEdPublicKeyFromPEM(publicKey)
@@ -39,7 +39,7 @@ func NewDefaultValidator(
 
 	return &DefaultValidator{
 		key:            &key,
-		TokenValidator: isTokenValid,
+		TokenValidator: tokenValidator,
 	}, nil
 }
 

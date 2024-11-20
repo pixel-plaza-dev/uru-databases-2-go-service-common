@@ -14,7 +14,10 @@ type (
 	Validator interface {
 		GetToken(tokenString string) (*jwt.Token, error)
 		GetClaims(tokenString string) (*jwt.MapClaims, error)
-		GetValidatedClaims(token string, interception pbdetails.Interception) (*jwt.MapClaims, error)
+		GetValidatedClaims(
+			token string,
+			interception pbdetails.Interception,
+		) (*jwt.MapClaims, error)
 	}
 
 	// DefaultValidator struct
@@ -95,7 +98,11 @@ func (d *DefaultValidator) GetClaims(tokenString string) (
 }
 
 // ValidateClaims validates the given claims
-func (d *DefaultValidator) ValidateClaims(token string, claims *jwt.MapClaims, interception pbdetails.Interception) (*jwt.MapClaims, error) {
+func (d *DefaultValidator) ValidateClaims(
+	token string,
+	claims *jwt.MapClaims,
+	interception pbdetails.Interception,
+) (*jwt.MapClaims, error) {
 	// Check if is a refresh token
 	irt, ok := (*claims)[commonjwt.IsRefreshTokenClaim].(bool)
 	if !ok {
@@ -121,7 +128,10 @@ func (d *DefaultValidator) ValidateClaims(token string, claims *jwt.MapClaims, i
 }
 
 // GetValidatedClaims parses, validates and returns the claims of the given JWT token string
-func (d *DefaultValidator) GetValidatedClaims(token string, interception pbdetails.Interception) (
+func (d *DefaultValidator) GetValidatedClaims(
+	token string,
+	interception pbdetails.Interception,
+) (
 	*jwt.MapClaims, error,
 ) {
 	// Get the claims

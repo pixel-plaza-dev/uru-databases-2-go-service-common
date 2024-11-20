@@ -63,7 +63,8 @@ var Mode = NewModeFlag(ModeDev, []string{ModeDev, ModeProd})
 // SetModeFlag sets the mode flag
 func SetModeFlag() {
 	flag.Var(
-		Mode, "m",
+		Mode,
+		"m",
 		"Specify mode. Allowed values are: dev, prod. Default is the development mode",
 	)
 }

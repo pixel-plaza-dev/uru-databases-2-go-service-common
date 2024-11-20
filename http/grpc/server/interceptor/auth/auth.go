@@ -20,18 +20,19 @@ type (
 
 	// Interceptor is the interceptor for the authentication
 	Interceptor struct {
-		validator          commonvalidator.Validator
-		methodsToIntercept map[pbdetails.GRPCMethod]pbdetails.Interception
+		validator         commonvalidator.Validator
+		grpcInterceptions map[pbdetails.GRPCMethod]pbdetails.Interception
 	}
 )
 
 // NewInterceptor creates a new authentication interceptor
 func NewInterceptor(
-	validator commonvalidator.Validator, methodsToIntercept map[pbdetails.GRPCMethod]pbdetails.Interception,
+	validator commonvalidator.Validator,
+	grpcInterceptions map[pbdetails.GRPCMethod]pbdetails.Interception,
 ) *Interceptor {
 	return &Interceptor{
-		validator:          validator,
-		methodsToIntercept: methodsToIntercept,
+		validator:         validator,
+		grpcInterceptions: grpcInterceptions,
 	}
 }
 
@@ -54,7 +55,7 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 		methodName := i.GetMethodName(info.FullMethod)
 
 		// Check if the method should be intercepted
-		interception, ok := i.methodsToIntercept[pbdetails.GRPCMethod(methodName)]
+		interception, ok := i.grpcInterceptions[pbdetails.GRPCMethod(methodName)]
 		if !ok || interception == pbdetails.None {
 			return handler(ctx, req)
 		}

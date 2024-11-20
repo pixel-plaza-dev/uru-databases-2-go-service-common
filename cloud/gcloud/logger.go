@@ -20,7 +20,10 @@ func (l Logger) LoadedTokenSource(tokenSource *oauth.TokenSource) {
 	// Get the access token from the token source
 	token, err := tokenSource.Token()
 	if err != nil {
-		l.logger.LogMessageWithDetails("Failed to load token source", err.Error())
+		l.logger.LogMessageWithDetails(
+			"Failed to load token source",
+			err.Error(),
+		)
 		return
 	}
 

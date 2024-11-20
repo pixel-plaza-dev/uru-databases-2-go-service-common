@@ -27,7 +27,10 @@ func NewCtxMetadata(metadataFields map[string]string) *CtxMetadata {
 
 	// Add the metadata fields
 	for key, value := range metadataFields {
-		fields = append(fields, MetadataField{Key: strings.ToLower(key), Value: value})
+		fields = append(
+			fields,
+			MetadataField{Key: strings.ToLower(key), Value: value},
+		)
 	}
 
 	return &CtxMetadata{

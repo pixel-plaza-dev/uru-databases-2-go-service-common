@@ -6,6 +6,12 @@ import (
 )
 
 var (
-	MissingTokenError        = status.Error(codes.Unauthenticated, "missing token")
-	UnexpectedTokenTypeError = status.Error(codes.Unauthenticated, "unexpected token type")
+	MissingTokenError = status.Error(
+		codes.Unauthenticated,
+		"missing token",
+	)
+	UnexpectedTokenTypeError = status.Error(
+		codes.Unauthenticated,
+		"unexpected token type",
+	)
 )

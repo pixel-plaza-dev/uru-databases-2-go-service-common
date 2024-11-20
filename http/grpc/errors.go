@@ -7,7 +7,10 @@ import (
 )
 
 var (
-	InternalServerError                   = status.Error(codes.Internal, "internal server error")
+	InternalServerError = status.Error(
+		codes.Internal,
+		"internal server error",
+	)
 	ServiceUnavailable                    = errors.New("service unavailable")
 	Unauthenticated                       = errors.New("unauthenticated")
 	Unauthorized                          = errors.New("unauthorized")

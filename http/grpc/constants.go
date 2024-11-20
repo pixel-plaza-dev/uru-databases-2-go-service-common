@@ -20,7 +20,7 @@ const (
 
 	// CtxToken
 	//
-	//ClaimsKey is the key for the JWT context claims
+	// ClaimsKey is the key for the JWT context claims
 	CtxToken
 
 	ClaimsKey = "jwt_claims"

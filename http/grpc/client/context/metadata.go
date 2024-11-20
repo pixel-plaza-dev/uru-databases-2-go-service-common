@@ -3,25 +3,23 @@ package context
 import (
 	"context"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	"google.golang.org/grpc/metadata"
 	"strings"
 )
 
 type (
-// Metadata
+	// MetadataField is a field in the metadata
+	MetadataField struct {
+		Key   string
+		Value string
+	}
+
+	// CtxMetadata is the metadata for the context
+	CtxMetadata struct {
+		MetadataFields []MetadataField
+	}
 )
-
-// MetadataField is a field in the metadata
-type MetadataField struct {
-	Key   string
-	Value string
-}
-
-// CtxMetadata is the metadata for the context
-type CtxMetadata struct {
-	MetadataFields []MetadataField
-}
 
 // NewCtxMetadata creates a new CtxMetadata
 func NewCtxMetadata(metadataFields map[string]string) *CtxMetadata {
@@ -70,4 +68,15 @@ func GetCtxWithMetadata(
 		md.Append(field.Key, field.Value)
 	}
 	return metadata.NewOutgoingContext(ctx, md)
+}
+
+// AppendGCloudTokenToOutgoingContext appends the GCloud token to the outgoing context
+func AppendGCloudTokenToOutgoingContext(
+	ctx context.Context, gcloudToken string,
+) context.Context {
+	return metadata.AppendToOutgoingContext(
+		ctx,
+		commongcloud.AuthorizationMetadataKey,
+		commongrpc.BearerPrefix+" "+gcloudToken,
+	)
 }

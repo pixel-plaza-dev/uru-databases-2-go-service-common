@@ -3,7 +3,7 @@ package context
 import (
 	"errors"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

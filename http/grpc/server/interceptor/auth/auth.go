@@ -3,8 +3,7 @@ package auth
 import (
 	"context"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
-	grpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/server/context"
+	commongrpcserverctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/server/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -33,29 +32,6 @@ func NewInterceptor(
 		validator:          validator,
 		methodsToIntercept: methodsToIntercept,
 	}
-}
-
-// GetTokenFromMetadata gets the token from the metadata
-func (i *Interceptor) GetTokenFromMetadata(md metadata.MD) (string, error) {
-	// Get the authorization from the metadata
-	authorization := md.Get(commongrpc.AuthorizationMetadataKey)
-	tokenIdx := commongrpc.TokenIdx.Int()
-	if len(authorization) <= tokenIdx {
-		return "", AuthorizationMetadataNotProvidedError
-	}
-
-	// Get the authorization value from the metadata
-	authorizationValue := authorization[tokenIdx]
-
-	// Split the authorization value by space
-	authorizationFields := strings.Split(authorizationValue, " ")
-
-	// Check if the authorization value is valid
-	if len(authorizationFields) != 2 || authorizationFields[0] != commongrpc.BearerPrefix {
-		return "", commongrpc.AuthorizationMetadataInvalidError
-	}
-
-	return authorizationFields[1], nil
 }
 
 // GetMethodName gets the method name from the full method
@@ -89,7 +65,7 @@ func (i *Interceptor) Authenticate(mustBeRefreshToken bool) grpc.UnaryServerInte
 		}
 
 		// Get the token from the metadata
-		tokenString, err := i.GetTokenFromMetadata(md)
+		tokenString, err := commongrpcserverctx.GetAuthorizationTokenFromMetadata(md)
 		if err != nil {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
@@ -100,8 +76,8 @@ func (i *Interceptor) Authenticate(mustBeRefreshToken bool) grpc.UnaryServerInte
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
 
-		// Set the claims in the context
-		ctx = grpcctx.SetCtxClaims(&ctx, claims)
+		// Set the token claims to the context
+		ctx = commongrpcserverctx.SetCtxTokenClaims(ctx, claims)
 
 		return handler(ctx, req)
 	}

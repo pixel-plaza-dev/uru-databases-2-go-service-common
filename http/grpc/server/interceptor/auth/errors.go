@@ -9,7 +9,4 @@ var (
 	MetadataNotProvidedError = status.Error(
 		codes.Unauthenticated, "metadata is not provided",
 	)
-	AuthorizationMetadataNotProvidedError = status.Error(
-		codes.Unauthenticated, "authorization metadata is not provided",
-	)
 )

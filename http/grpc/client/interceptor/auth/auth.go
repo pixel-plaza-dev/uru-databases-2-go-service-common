@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 	"errors"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
-	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
+	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/oauth"
 )

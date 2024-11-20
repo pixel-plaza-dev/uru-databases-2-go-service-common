@@ -6,6 +6,5 @@ import (
 )
 
 var (
-	// FailedToGetOutgoingContextError is the error for failed to get outgoing context
 	FailedToGetOutgoingContextError = status.Error(codes.Internal, "failed to get outgoing context")
 )

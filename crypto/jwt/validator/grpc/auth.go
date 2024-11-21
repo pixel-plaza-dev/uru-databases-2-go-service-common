@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	commonredisauth "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/database/redis/auth"
-	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/oauth"
@@ -54,28 +53,11 @@ func (d *DefaultTokenValidator) IsTokenValid(
 		return d.redisTokenValidator.IsTokenValid(token)
 	}
 
-	// Get context metadata
-	var ctxMetadata *commongrpcclientctx.CtxMetadata
-	if jwtId != "" {
-		ctxMetadata = commongrpcclientctx.NewAuthenticatedCtxMetadata(
-			d.accessToken,
-			token,
-		)
-	} else {
-		ctxMetadata = commongrpcclientctx.NewUnauthenticatedCtxMetadata(d.accessToken)
-	}
-
-	// Get outgoing context
-	grpcCtx := commongrpcclientctx.GetCtxWithMetadata(
-		ctxMetadata,
-		context.Background(),
-	)
-
 	// Validate the token
 	if isRefreshToken {
 		// Check if the refresh token is valid
 		response, err := (*d.authClient).IsRefreshTokenValid(
-			grpcCtx, &pbauth.IsRefreshTokenValidRequest{
+			context.Background(), &pbauth.IsRefreshTokenValidRequest{
 				JwtId: jwtId,
 			},
 		)
@@ -88,7 +70,7 @@ func (d *DefaultTokenValidator) IsTokenValid(
 
 	// Check if the access token is valid
 	response, err := (*d.authClient).IsAccessTokenValid(
-		grpcCtx, &pbauth.IsAccessTokenValidRequest{
+		context.Background(), &pbauth.IsAccessTokenValidRequest{
 			JwtId: jwtId,
 		},
 	)

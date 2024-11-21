@@ -23,11 +23,11 @@ type (
 
 // NewDefaultTokenValidator creates a new default token validator
 func NewDefaultTokenValidator(
-	tokenSource *oauth.TokenSource,
+	authTokenSource *oauth.TokenSource,
 	authClient *pbauth.AuthClient,
 ) (*DefaultTokenValidator, error) {
 	// Get the token from the token source
-	token, err := tokenSource.Token()
+	token, err := authTokenSource.Token()
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (d *DefaultTokenValidator) IsTokenValid(
 			tokenString,
 		)
 	} else {
-		ctxMetadata = commongrpcclientctx.NewUnauthenticatedCtxMetadata(tokenString)
+		ctxMetadata = commongrpcclientctx.NewUnauthenticatedCtxMetadata(d.accessToken)
 	}
 
 	// Get outgoing context

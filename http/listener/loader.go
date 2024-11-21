@@ -1,8 +1,7 @@
 package listener
 
 import (
-	enverror "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env/error"
-	"os"
+	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
 	"strings"
 )
 
@@ -17,9 +16,9 @@ func LoadServicePort(host string, key string) (
 	servicePort *ServicePort, err error,
 ) {
 	// Get environment variable
-	port, exists := os.LookupEnv(key)
-	if !exists {
-		return nil, enverror.VariableNotFoundError{Key: key}
+	port, err := commonenv.LoadVariable(key)
+	if err != nil {
+		return nil, err
 	}
 
 	// Build port string

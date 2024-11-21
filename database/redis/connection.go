@@ -1,67 +1,60 @@
-package mongodb
+package redis
 
 import (
+	"github.com/go-redis/redis/v8"
 	commondatabase "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/database"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
-	"time"
 )
 
 type (
 	// ConnectionHandler interface
 	ConnectionHandler interface {
-		Connect() (*mongo.Client, error)
-		GetClient() (*mongo.Client, error)
+		Connect() (*redis.Client, error)
+		GetClient() (*redis.Client, error)
 		Disconnect()
 	}
 
 	// Config struct
 	Config struct {
-		Uri     string
-		Timeout time.Duration
+		Uri      string
+		Password string
+		Database int
 	}
 
 	// DefaultConnectionHandler struct
 	DefaultConnectionHandler struct {
-		Ctx           context.Context
-		Cancel        context.CancelFunc
-		ClientOptions *options.ClientOptions
-		Client        *mongo.Client
+		Client        *redis.Client
+		ClientOptions *redis.Options
 	}
 )
 
 // NewDefaultConnectionHandler creates a new connection
 func NewDefaultConnectionHandler(config *Config) DefaultConnectionHandler {
-	// Set client options
-	ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
-	clientOptions := options.Client().ApplyURI(config.Uri)
+	// Define the Redis options
+	clientOptions := &redis.Options{
+		Addr:     config.Uri,
+		Password: config.Password,
+		DB:       config.Database,
+	}
 
 	return DefaultConnectionHandler{
-		Cancel:        cancel,
-		Ctx:           ctx,
 		ClientOptions: clientOptions,
 		Client:        nil,
 	}
 }
 
-// Connect returns a new MongoDB client
-func (d DefaultConnectionHandler) Connect() (*mongo.Client, error) {
+// Connect returns a new Redis client
+func (d DefaultConnectionHandler) Connect() (*redis.Client, error) {
 	// Check if the connection is already established
 	if d.Client != nil {
 		return d.Client, commondatabase.AlreadyConnectedError
 	}
 
-	// Connect to MongoDB
-	client, err := mongo.Connect(d.Ctx, d.ClientOptions)
+	// Create a new Redis client
+	client := redis.NewClient(d.ClientOptions)
 
-	// Create MongoDB Connection struct
-	if err != nil {
-		return nil, commondatabase.FailedToConnectError
-	}
-
-	// Check the connection
-	err = client.Ping(context.Background(), nil)
+	// Ping the Redis server to check the connection
+	_, err := client.Ping(context.Background()).Result()
 	if err != nil {
 		return nil, commondatabase.FailedToPingError
 	}
@@ -72,8 +65,8 @@ func (d DefaultConnectionHandler) Connect() (*mongo.Client, error) {
 	return client, nil
 }
 
-// GetClient returns the MongoDB client
-func (d DefaultConnectionHandler) GetClient() (*mongo.Client, error) {
+// GetClient returns the Redis client
+func (d DefaultConnectionHandler) GetClient() (*redis.Client, error) {
 	// Check if the connection is established
 	if d.Client == nil {
 		return nil, commondatabase.NotConnectedError
@@ -82,7 +75,7 @@ func (d DefaultConnectionHandler) GetClient() (*mongo.Client, error) {
 	return d.Client, nil
 }
 
-// Disconnect closes the MongoDB client connection
+// Disconnect closes the Redis client connection
 func (d DefaultConnectionHandler) Disconnect() {
 	defer func() {
 		// Check if the connection is established
@@ -92,7 +85,7 @@ func (d DefaultConnectionHandler) Disconnect() {
 
 		// Close the connection
 		d.Cancel()
-		if err := d.Client.Disconnect(d.Ctx); err != nil {
+		if err := d.Client.Close(); err != nil {
 			panic(commondatabase.FailedToDisconnectError)
 		}
 	}()

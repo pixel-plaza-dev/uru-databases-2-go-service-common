@@ -3,7 +3,6 @@ package jwt
 import "errors"
 
 var (
-	UnableToReadKeyFileError     = errors.New("unable to read private key file")
 	UnableToParsePrivateKeyError = errors.New("unable to parse private key")
 	UnableToParsePublicKeyError  = errors.New("unable to parse public key")
 	InvalidTokenError            = errors.New("invalid token")

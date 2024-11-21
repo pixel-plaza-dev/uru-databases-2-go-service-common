@@ -11,7 +11,7 @@ import (
 type (
 	// TokenValidator interface
 	TokenValidator interface {
-		IsTokenValid(tokenString string, isRefreshToken bool) bool
+		IsTokenValid(token string, jwtId string, isRefreshToken bool) bool
 	}
 
 	// DefaultTokenValidator struct
@@ -40,15 +40,16 @@ func NewDefaultTokenValidator(
 
 // IsTokenValid checks if the token is valid
 func (d *DefaultTokenValidator) IsTokenValid(
-	tokenString string,
+	token string,
+	jwtId string,
 	isRefreshToken bool,
 ) bool {
 	// Get context metadata
 	var ctxMetadata *commongrpcclientctx.CtxMetadata
-	if tokenString != "" {
+	if jwtId != "" {
 		ctxMetadata = commongrpcclientctx.NewAuthenticatedCtxMetadata(
 			d.accessToken,
-			tokenString,
+			token,
 		)
 	} else {
 		ctxMetadata = commongrpcclientctx.NewUnauthenticatedCtxMetadata(d.accessToken)
@@ -65,7 +66,7 @@ func (d *DefaultTokenValidator) IsTokenValid(
 		// Check if the refresh token is valid
 		response, err := (*d.authClient).IsRefreshTokenValid(
 			grpcCtx, &pbauth.IsRefreshTokenValidRequest{
-				RefreshToken: tokenString,
+				JwtId: jwtId,
 			},
 		)
 		if err != nil {
@@ -78,7 +79,7 @@ func (d *DefaultTokenValidator) IsTokenValid(
 	// Check if the access token is valid
 	response, err := (*d.authClient).IsAccessTokenValid(
 		grpcCtx, &pbauth.IsAccessTokenValidRequest{
-			AccessToken: tokenString,
+			JwtId: jwtId,
 		},
 	)
 	if err != nil {

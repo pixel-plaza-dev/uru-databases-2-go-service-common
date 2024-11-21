@@ -39,7 +39,7 @@ func (i *DefaultIssuer) GenerateClaims(
 	return &jwt.MapClaims{
 		"exp":                         expirationTime.Unix(),
 		"iat":                         time.Now().Unix(),
-		"jti":                         jwtId,
+		commonjwt.IdentifierClaim:     jwtId,
 		"sub":                         userId,
 		commonjwt.IsRefreshTokenClaim: isRefreshToken,
 	}

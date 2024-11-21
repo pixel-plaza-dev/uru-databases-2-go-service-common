@@ -109,6 +109,12 @@ func (d *DefaultValidator) ValidateClaims(
 		return nil, commonjwt.IRTNotValidError
 	}
 
+	// Get the JWT ID
+	jwtId, ok := (*claims)[commonjwt.IdentifierClaim].(string)
+	if !ok {
+		return nil, commonjwt.IdentifierNotValidError
+	}
+
 	// Check if it must be a refresh token
 	if !irt && interception == pbtypes.RefreshToken {
 		return nil, commonjwt.MustBeRefreshTokenError
@@ -120,7 +126,7 @@ func (d *DefaultValidator) ValidateClaims(
 	}
 
 	// Check if the token is valid
-	if !d.TokenValidator.IsTokenValid(token, irt) {
+	if !d.TokenValidator.IsTokenValid(token, jwtId, irt) {
 		return nil, commonjwt.InvalidTokenError
 	}
 

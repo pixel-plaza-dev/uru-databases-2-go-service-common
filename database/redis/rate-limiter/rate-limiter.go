@@ -32,9 +32,20 @@ func NewDefaultRateLimiter(redisClient *redis.Client, limit int, period time.Dur
 	}
 }
 
+// GetKey gets the rate limiter key
+func (d *DefaultRateLimiter) GetKey(ip string) string {
+	return commonredis.GetKey(ip, RateLimiterPrefix)
+}
+
+// SetInitialValue sets the initial value for the given key
+func (d *DefaultRateLimiter) SetInitialValue(key string) error {
+	_, err := d.redisClient.Set(context.Background(), key, 1, d.period).Result()
+	return err
+}
+
 // Limit limits the rate of requests
 func (d *DefaultRateLimiter) Limit(ip string) error {
-	key := commonredis.GetKey(ip, RateLimiterPrefix)
+	key := d.GetKey(ip)
 
 	// Check the current rate limit
 	value, err := d.redisClient.Get(context.Background(), key).Result()
@@ -48,8 +59,7 @@ func (d *DefaultRateLimiter) Limit(ip string) error {
 		count, _ = strconv.ParseInt(value, 10, 64)
 	} else {
 		// Set the initial value
-		_, err = d.redisClient.Set(context.Background(), key, 1, d.period).Result()
-		return err
+		return d.SetInitialValue(key)
 	}
 
 	// If the rate limit is exceeded, return an error

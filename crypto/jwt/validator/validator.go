@@ -109,7 +109,7 @@ func (d *DefaultValidator) ValidateClaims(
 		return nil, commonjwt.IRTNotValidError
 	}
 
-	// Get the JWT ID
+	// Get the JWT Identifier
 	jwtId, ok := (*claims)[commonjwt.IdentifierClaim].(string)
 	if !ok {
 		return nil, commonjwt.IdentifierNotValidError
@@ -126,7 +126,11 @@ func (d *DefaultValidator) ValidateClaims(
 	}
 
 	// Check if the token is valid
-	if !d.TokenValidator.IsTokenValid(token, jwtId, irt) {
+	isValid, err := d.TokenValidator.IsTokenValid(token, jwtId, irt)
+	if err != nil {
+		return nil, err
+	}
+	if !isValid {
 		return nil, commonjwt.InvalidTokenError
 	}
 

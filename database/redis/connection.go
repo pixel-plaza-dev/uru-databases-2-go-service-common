@@ -84,7 +84,6 @@ func (d DefaultConnectionHandler) Disconnect() {
 		}
 
 		// Close the connection
-		d.Cancel()
 		if err := d.Client.Close(); err != nil {
 			panic(commondatabase.FailedToDisconnectError)
 		}

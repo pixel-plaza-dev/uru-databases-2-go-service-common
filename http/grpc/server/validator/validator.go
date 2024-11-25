@@ -28,7 +28,7 @@ func NewDefaultValidator() DefaultValidator {
 }
 
 // ValidateEmail validates the email address field
-func (d *DefaultValidator) ValidateEmail(emailField string, email string, validations *map[string][]error) {
+func (d DefaultValidator) ValidateEmail(emailField string, email string, validations *map[string][]error) {
 	if _, err := commonvalidator.ValidMailAddress(email); err != nil {
 		(*validations)[emailField] = append(
 			(*validations)[emailField],
@@ -38,17 +38,17 @@ func (d *DefaultValidator) ValidateEmail(emailField string, email string, valida
 }
 
 // ValidateBirthdate validates the birthdate field
-func (d *DefaultValidator) ValidateBirthdate(birthdateField string, birthdate *timestamppb.Timestamp, validations *map[string][]error) {
+func (d DefaultValidator) ValidateBirthdate(birthdateField string, birthdate *timestamppb.Timestamp, validations *map[string][]error) {
 	if birthdate == nil || birthdate.AsTime().After(time.Now()) {
 		(*validations)[birthdateField] = append(
 			(*validations)[birthdateField],
-			commonvalidator.InvalidBirthDateError,
+			commonvalidator.InvalidBirthdateError,
 		)
 	}
 }
 
 // ValidateNonEmptyStringFields validates the non-empty string fields
-func (d *DefaultValidator) ValidateNonEmptyStringFields(request interface{}, fieldsToValidate *map[string]string) *map[string][]error {
+func (d DefaultValidator) ValidateNonEmptyStringFields(request interface{}, fieldsToValidate *map[string]string) *map[string][]error {
 	// Validation variables
 	validations := make(map[string][]error)
 
@@ -63,7 +63,7 @@ func (d *DefaultValidator) ValidateNonEmptyStringFields(request interface{}, fie
 }
 
 // CheckValidations checks if there are any validations
-func (d *DefaultValidator) CheckValidations(validations *map[string][]error, code codes.Code) error {
+func (d DefaultValidator) CheckValidations(validations *map[string][]error, code codes.Code) error {
 	if len(*validations) > 0 {
 		err := commonvalidatorerror.FailedValidationError{FieldsErrors: validations}
 		return status.Error(code, err.Error())

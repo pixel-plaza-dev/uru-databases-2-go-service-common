@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	FieldNotFoundError      = errors.New("field not found")
-	InvalidBirthDateError   = errors.New("invalid birth date")
+	InvalidBirthdateError   = errors.New("invalid birthdate")
 	InvalidMailAddressError = errors.New("invalid mail address")
 	EmptyStringFieldError   = errors.New("string field is empty")
 )

@@ -12,9 +12,8 @@ type User struct {
 	FirstName      string             `json:"first_name" bson:"first_name"`
 	LastName       string             `json:"last_name" bson:"last_name"`
 	HashedPassword string             `json:"hashed_password" bson:"hashed_password"`
-	Address        string             `json:"address,omitempty" bson:"address,omitempty"`
-	BirthDate      time.Time          `json:"birth_date,omitempty" bson:"birth_date,omitempty"`
 	Deleted        bool               `json:"deleted" bson:"deleted"`
+	Birthdate      time.Time          `json:"birthdate,omitempty" bson:"birthdate,omitempty"`
 }
 
 // UserEmail is the MongoDB for the user email entity

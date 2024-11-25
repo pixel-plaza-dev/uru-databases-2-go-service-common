@@ -12,11 +12,11 @@ type (
 		BuildMessage(message string) string
 		BuildMessageWithDetails(message string, details string) string
 		BuildMessageWithDetailsAndStatus(
-			message string, details string, status string) string
+			message string, details string, status Status) string
 		LogMessage(message string)
 		LogMessageWithDetails(message string, details string)
 		LogMessageWithDetailsAndStatus(
-			message string, details string, status string)
+			message string, details string, status Status)
 	}
 
 	// DefaultLogger is a logger that logs messages
@@ -48,10 +48,10 @@ func (d DefaultLogger) BuildMessageWithDetails(
 
 // BuildMessageWithDetailsAndStatus creates a string that contains a message with details and a status
 func (d DefaultLogger) BuildMessageWithDetailsAndStatus(
-	message string, details string, status string,
+	message string, details string, status Status,
 ) string {
 	formattedDetails := utils.AddBrackets(details)
-	formattedStatus := utils.AddBrackets(status)
+	formattedStatus := utils.AddBrackets(status.String())
 	return strings.Join(
 		[]string{d.FormattedName, message, formattedDetails, formattedStatus}, " ",
 	)
@@ -71,7 +71,7 @@ func (d DefaultLogger) LogMessageWithDetails(message string, details string) {
 
 // LogMessageWithDetailsAndStatus logs a message with details and a status
 func (d DefaultLogger) LogMessageWithDetailsAndStatus(
-	message string, details string, status string,
+	message string, details string, status Status,
 ) {
 	formattedMessage := d.BuildMessageWithDetailsAndStatus(message, details, status)
 	log.Println(formattedMessage)

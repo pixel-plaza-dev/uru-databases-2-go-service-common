@@ -4,7 +4,6 @@ import (
 	"context"
 	commonredisauth "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/database/redis/auth"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/oauth"
 )
 
@@ -56,26 +55,19 @@ func (d *DefaultTokenValidator) IsTokenValid(
 	// Validate the token
 	if isRefreshToken {
 		// Check if the refresh token is valid
-		response, err := (*d.authClient).IsRefreshTokenValid(
+		_, err := (*d.authClient).IsRefreshTokenValid(
 			context.Background(), &pbauth.IsRefreshTokenValidRequest{
 				JwtId: jwtId,
 			},
 		)
-		if err != nil {
-			return false, err
-		}
-		return response.Code == uint32(codes.OK), nil
-
+		return err != nil, err
 	}
 
 	// Check if the access token is valid
-	response, err := (*d.authClient).IsAccessTokenValid(
+	_, err := (*d.authClient).IsAccessTokenValid(
 		context.Background(), &pbauth.IsAccessTokenValidRequest{
 			JwtId: jwtId,
 		},
 	)
-	if err != nil {
-		return false, err
-	}
-	return response.Code == uint32(codes.OK), nil
+	return err != nil, err
 }

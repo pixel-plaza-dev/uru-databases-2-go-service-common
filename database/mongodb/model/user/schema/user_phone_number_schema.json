@@ -3,8 +3,7 @@
     "required": [
       "phone_number",
       "user_id",
-      "assigned_at",
-      "is_active"
+      "assigned_at"
     ],
     "properties": {
       "phone_number": {
@@ -20,10 +19,6 @@
       "assigned_at": {
         "bsonType": "date",
         "description": "must be a date and is required"
-      },
-      "is_active": {
-        "bsonType": "bool",
-        "description": "must be a boolean and is required"
       },
       "revoked_at": {
         "bsonType": "date",

@@ -48,3 +48,19 @@ func GetCtxTokenClaims(ctx context.Context) (jwt.Claims, error) {
 	}
 	return claims, nil
 }
+
+// GetCtxTokenClaimsSubject gets the token claims subject from the context
+func GetCtxTokenClaimsSubject(ctx context.Context) (string, error) {
+	// Get the claims from the context
+	claims, err := GetCtxTokenClaims(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	// Get the subject from the claims
+	subject, err := claims.GetSubject()
+	if err != nil {
+		return "", MissingTokenClaimsSubjectInContextError
+	}
+	return subject, nil
+}

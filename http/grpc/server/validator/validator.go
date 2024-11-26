@@ -49,7 +49,7 @@ func (d DefaultValidator) ValidateBirthdate(birthdateField string, birthdate *ti
 
 // ValidateNonEmptyStringFields validates the non-empty string fields
 func (d DefaultValidator) ValidateNonEmptyStringFields(request interface{}, fieldsToValidate *map[string]string) *map[string][]error {
-	// Validation variables
+	// Create the validations map
 	validations := make(map[string][]error)
 
 	// Check if the required string fields are empty

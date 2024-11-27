@@ -19,7 +19,7 @@ func CreateSession(client *mongo.Client) (mongo.Session, error) {
 }
 
 // CreateTransaction creates a new transaction
-func CreateTransaction(client *mongo.Client, queries func() error) error {
+func CreateTransaction(client *mongo.Client, queries func(sc mongo.SessionContext) error) error {
 	// Create the session
 	clientSession, err := CreateSession(client)
 	if err != nil {
@@ -37,7 +37,7 @@ func CreateTransaction(client *mongo.Client, queries func() error) error {
 		}
 
 		// Call the queries
-		err = queries()
+		err = queries(sc)
 		if err != nil {
 			_ = clientSession.AbortTransaction(sc)
 			return err

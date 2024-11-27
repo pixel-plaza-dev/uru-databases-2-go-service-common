@@ -50,6 +50,5 @@ func CreateTransaction(client *mongo.Client, queries func() error) error {
 
 		return nil
 	})
-
-	return nil
+	return err
 }

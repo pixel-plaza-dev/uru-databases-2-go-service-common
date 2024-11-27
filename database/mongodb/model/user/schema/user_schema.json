@@ -5,8 +5,7 @@
       "first_name",
       "last_name",
       "username",
-      "hashed_password",
-      "deleted"
+      "hashed_password"
     ],
     "properties": {
       "first_name": {
@@ -37,9 +36,9 @@
         "bsonType": "date",
         "description": "must be a date"
       },
-      "deleted": {
-        "bsonType": "bool",
-        "description": "must be a boolean"
+      "deleted_at": {
+        "bsonType": "date",
+        "description": "must be a date"
       }
     }
   }

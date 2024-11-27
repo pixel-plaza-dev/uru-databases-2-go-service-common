@@ -24,7 +24,6 @@ func CheckPasswordHash(password string, hash string) bool {
 	if err != nil {
 		return false
 	}
-
 	return true
 }
 

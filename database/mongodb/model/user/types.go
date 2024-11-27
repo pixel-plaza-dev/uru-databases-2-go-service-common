@@ -12,7 +12,7 @@ type User struct {
 	FirstName      string             `json:"first_name" bson:"first_name"`
 	LastName       string             `json:"last_name" bson:"last_name"`
 	HashedPassword string             `json:"hashed_password" bson:"hashed_password"`
-	Deleted        bool               `json:"deleted" bson:"deleted"`
+	DeletedAt      time.Time          `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
 	Birthdate      time.Time          `json:"birthdate,omitempty" bson:"birthdate,omitempty"`
 }
 

@@ -55,19 +55,25 @@ func (d *DefaultTokenValidator) IsTokenValid(
 	// Validate the token
 	if isRefreshToken {
 		// Check if the refresh token is valid
-		_, err := (*d.authClient).IsRefreshTokenValid(
+		response, err := (*d.authClient).IsRefreshTokenValid(
 			context.Background(), &pbauth.IsRefreshTokenValidRequest{
 				JwtId: jwtId,
 			},
 		)
-		return err != nil, err
+		if err != nil {
+			return false, err
+		}
+		return response.IsValid, err
 	}
 
 	// Check if the access token is valid
-	_, err := (*d.authClient).IsAccessTokenValid(
+	response, err := (*d.authClient).IsAccessTokenValid(
 		context.Background(), &pbauth.IsAccessTokenValidRequest{
 			JwtId: jwtId,
 		},
 	)
-	return err != nil, err
+	if err != nil {
+		return false, err
+	}
+	return response.IsValid, err
 }

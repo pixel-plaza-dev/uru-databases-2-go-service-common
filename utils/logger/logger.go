@@ -1,22 +1,34 @@
 package logger
 
 import (
+	"fmt"
 	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils"
-	"log"
 	"strings"
 )
 
 type (
+	// Log interface
+	Log interface {
+		String() string
+	}
+
+	// LogMessage struct
+	LogMessage struct {
+		Title   string
+		Details []string
+		Status  Status
+	}
+
+	// LogError struct
+	LogError struct {
+		Title  string
+		Errors []error
+	}
+
 	// Logger is an interface for logging messages
 	Logger interface {
-		BuildMessage(message string) string
-		BuildMessageWithDetails(message string, details string) string
-		BuildMessageWithDetailsAndStatus(
-			message string, details string, status Status) string
-		LogMessage(message string)
-		LogMessageWithDetails(message string, details string)
-		LogMessageWithDetailsAndStatus(
-			message string, details string, status Status)
+		LogMessage(log *LogMessage)
+		LogError(log *LogError)
 	}
 
 	// DefaultLogger is a logger that logs messages
@@ -26,53 +38,97 @@ type (
 	}
 )
 
+// FormatDetails gets the formatted details
+func FormatDetails(details []string) string {
+	return utils.AddBrackets(strings.Join(details, ", "))
+}
+
+// FormatStatus gets the formatted status
+func FormatStatus(status Status) string {
+	return utils.AddBrackets(status.String())
+}
+
+// NewLogMessage creates a new log message
+func NewLogMessage(title string, status Status, details ...string) *LogMessage {
+	return &LogMessage{Title: title, Status: status, Details: details}
+}
+
+// String gets the string representation of a log message
+func (l *LogMessage) String() string {
+	var formattedLog []string
+
+	// Format status
+	if l.Status != StatusNone {
+		formattedLog = append(formattedLog, FormatStatus(l.Status))
+	}
+
+	// Add title
+	if l.Title != "" {
+		formattedLog = append(formattedLog, l.Title)
+	}
+
+	// Add formatted details
+	if len(l.Details) > 0 {
+		formattedLog = append(formattedLog, FormatDetails(l.Details))
+	}
+
+	return strings.Join(formattedLog, " ")
+}
+
+// NewLogError creates a new log error
+func NewLogError(title string, errors ...error) *LogError {
+	return &LogError{Title: title, Errors: errors}
+}
+
+// FormatErrors gets the formatted errors
+func FormatErrors(errors []error) string {
+	var errorsString []string
+	for _, err := range errors {
+		errorsString = append(errorsString, err.Error())
+	}
+
+	// Get formatted errors
+	return utils.AddBrackets(strings.Join(errorsString, ", "))
+}
+
+// String gets the string representation of a log error
+func (l *LogError) String() string {
+	var formattedLog []string
+
+	// Add message
+	if l.Title != "" {
+		formattedLog = append(formattedLog, l.Title)
+	}
+
+	// Add formatted errors
+	if len(l.Errors) > 0 {
+		formattedLog = append(formattedLog, FormatErrors(l.Errors))
+	}
+
+	return strings.Join(formattedLog, " ")
+}
+
 // NewDefaultLogger creates a new logger
 func NewDefaultLogger(name string) DefaultLogger {
 	return DefaultLogger{Name: name, FormattedName: utils.AddBrackets(name)}
 }
 
-// BuildMessage creates a string that contains a message that could be either a success or an error
-func (d DefaultLogger) BuildMessage(message string) string {
-	return strings.Join([]string{d.FormattedName, message}, " ")
-}
-
-// BuildMessageWithDetails creates a string that contains a message with details
-func (d DefaultLogger) BuildMessageWithDetails(
-	message string, details string,
-) string {
-	formattedDetails := utils.AddBrackets(details)
-	return strings.Join(
-		[]string{d.FormattedName, message, formattedDetails}, " ",
-	)
-}
-
-// BuildMessageWithDetailsAndStatus creates a string that contains a message with details and a status
-func (d DefaultLogger) BuildMessageWithDetailsAndStatus(
-	message string, details string, status Status,
-) string {
-	formattedDetails := utils.AddBrackets(details)
-	formattedStatus := utils.AddBrackets(status.String())
-	return strings.Join(
-		[]string{d.FormattedName, message, formattedDetails, formattedStatus}, " ",
-	)
+// FormatLogMessage formats a log message
+func (d DefaultLogger) FormatLogMessage(log *LogMessage) string {
+	return strings.Join([]string{d.FormattedName, log.String()}, ": ")
 }
 
 // LogMessage logs a message
-func (d DefaultLogger) LogMessage(message string) {
-	formattedMessage := d.BuildMessage(message)
-	log.Println(formattedMessage)
+func (d DefaultLogger) LogMessage(log *LogMessage) {
+	fmt.Println(d.FormatLogMessage(log))
 }
 
-// LogMessageWithDetails logs a message with details
-func (d DefaultLogger) LogMessageWithDetails(message string, details string) {
-	formattedMessage := d.BuildMessageWithDetails(message, details)
-	log.Println(formattedMessage)
+// FormatLogError formats a log error
+func (d DefaultLogger) FormatLogError(log *LogError) string {
+	return strings.Join([]string{d.FormattedName, utils.AddParentheses(StatusFailed.String()), log.String()}, ": ")
 }
 
-// LogMessageWithDetailsAndStatus logs a message with details and a status
-func (d DefaultLogger) LogMessageWithDetailsAndStatus(
-	message string, details string, status Status,
-) {
-	formattedMessage := d.BuildMessageWithDetailsAndStatus(message, details, status)
-	log.Println(formattedMessage)
+// LogError logs an error
+func (d DefaultLogger) LogError(log *LogError) {
+	fmt.Println(d.FormatLogError(log))
 }

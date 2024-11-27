@@ -15,5 +15,5 @@ func NewLogger(logger commonlogger.Logger) Logger {
 
 // IssuedToken logs a message when the server issues a token
 func (l Logger) IssuedToken() {
-	l.logger.LogMessage("Issued token")
+	l.logger.LogMessage(commonlogger.NewLogMessage("Issued token", commonlogger.StatusInfo))
 }

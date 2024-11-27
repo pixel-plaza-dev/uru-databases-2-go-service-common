@@ -15,5 +15,5 @@ func NewLogger(logger commonlogger.Logger) Logger {
 
 // ModeFlagSet is the flag set for the mode
 func (l Logger) ModeFlagSet(modeFlag *ModeFlag) {
-	l.logger.LogMessageWithDetails("Mode flag set", modeFlag.String())
+	l.logger.LogMessage(commonlogger.NewLogMessage("Mode flag set", commonlogger.StatusDebug, modeFlag.String()))
 }

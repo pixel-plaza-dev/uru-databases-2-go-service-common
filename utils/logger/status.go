@@ -13,6 +13,7 @@ const (
 	StatusInfo
 	StatusDebug
 	StatusTrace
+	StatusNone
 	StatusUnknown
 )
 
@@ -33,6 +34,8 @@ func (s Status) String() string {
 		return "Debug"
 	case StatusTrace:
 		return "Trace"
+	case StatusNone:
+		return ""
 	default:
 		return "Unknown"
 	}

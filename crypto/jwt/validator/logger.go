@@ -15,5 +15,5 @@ func NewLogger(logger commonlogger.Logger) Logger {
 
 // ValidatedToken logs a message when the server validates a token
 func (l Logger) ValidatedToken() {
-	l.logger.LogMessage("Validated token")
+	l.logger.LogMessage(commonlogger.NewLogMessage("Validated token", commonlogger.StatusInfo))
 }

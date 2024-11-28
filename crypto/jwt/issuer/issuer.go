@@ -3,6 +3,7 @@ package issuer
 import (
 	"crypto"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	"time"
 )
@@ -34,13 +35,14 @@ func NewDefaultIssuer(privateKey []byte) (*DefaultIssuer, error) {
 
 // GenerateClaims generates a new claims object
 func (i *DefaultIssuer) GenerateClaims(
-	jwtId string, userId string, expirationTime time.Time, isRefreshToken bool,
+	jwtId string, userId string, userUUID uuid.UUID, expirationTime time.Time, isRefreshToken bool,
 ) *jwt.MapClaims {
 	return &jwt.MapClaims{
 		"exp":                         expirationTime.Unix(),
 		"iat":                         time.Now().Unix(),
-		commonjwt.IdentifierClaim:     jwtId,
-		"sub":                         userId,
+		commonjwt.IdClaim:             jwtId,
+		commonjwt.UserIdClaim:         userId,
+		commonjwt.UserSharedIdClaim:   userUUID.String(),
 		commonjwt.IsRefreshTokenClaim: isRefreshToken,
 	}
 }

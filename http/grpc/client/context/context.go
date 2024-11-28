@@ -14,7 +14,7 @@ func GetOutgoingCtx(ctx context.Context) (context.Context, error) {
 	token, err := commongrpcserverctx.GetCtxTokenString(ctx)
 	if err != nil {
 		// Check if the token is missing
-		if errors.Is(err, commongrpcserverctx.MissingTokenInContextError) {
+		if errors.Is(err, commongrpcserverctx.MissingTokenError) {
 			return context.Background(), nil
 		}
 		return nil, err

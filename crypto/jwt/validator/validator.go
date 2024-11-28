@@ -110,7 +110,7 @@ func (d *DefaultValidator) ValidateClaims(
 	}
 
 	// Get the JWT Identifier
-	jwtId, ok := (*claims)[commonjwt.IdentifierClaim].(string)
+	jwtId, ok := (*claims)[commonjwt.IdClaim].(string)
 	if !ok {
 		return nil, commonjwt.IdentifierNotValidError
 	}

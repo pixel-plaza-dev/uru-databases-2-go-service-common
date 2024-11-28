@@ -1,4 +1,4 @@
-package context
+package error
 
 import (
 	"errors"

@@ -3,9 +3,11 @@ package context
 import "errors"
 
 var (
-	MissingTokenInContextError              = errors.New("missing token in context")
-	UnexpectedTokenTypeInContextError       = errors.New("unexpected type in context")
-	MissingTokenClaimsInContextError        = errors.New("missing token claims in context")
-	MissingTokenClaimsSubjectInContextError = errors.New("missing token claims subject in context")
-	UnexpectedTokenClaimsTypeInContextError = errors.New("unexpected token claims type in context")
+	MissingTokenError                   = errors.New("missing token")
+	UnexpectedTokenTypeError            = errors.New("unexpected type")
+	MissingTokenClaimsError             = errors.New("missing token claims")
+	MissingTokenClaimsUserIdError       = errors.New("missing token claims user id")
+	MissingTokenClaimsSharedUserIdError = errors.New("missing token claims shared user id")
+	MissingTokenClaimsIdError           = errors.New("missing token claims id")
+	UnexpectedTokenClaimsTypeError      = errors.New("unexpected token claims type")
 )

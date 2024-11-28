@@ -1,8 +1,8 @@
 package logger
 
 import (
-	"fmt"
 	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils"
+	"log"
 	"strings"
 )
 
@@ -27,8 +27,8 @@ type (
 
 	// Logger is an interface for logging messages
 	Logger interface {
-		LogMessage(log *LogMessage)
-		LogError(log *LogError)
+		LogMessage(logMessage *LogMessage)
+		LogError(logError *LogError)
 	}
 
 	// DefaultLogger is a logger that logs messages
@@ -114,21 +114,21 @@ func NewDefaultLogger(name string) DefaultLogger {
 }
 
 // FormatLogMessage formats a log message
-func (d DefaultLogger) FormatLogMessage(log *LogMessage) string {
-	return strings.Join([]string{d.FormattedName, log.String()}, ": ")
+func (d DefaultLogger) FormatLogMessage(logMessage *LogMessage) string {
+	return strings.Join([]string{d.FormattedName, logMessage.String()}, " - ")
 }
 
 // LogMessage logs a message
-func (d DefaultLogger) LogMessage(log *LogMessage) {
-	fmt.Println(d.FormatLogMessage(log))
+func (d DefaultLogger) LogMessage(logMessage *LogMessage) {
+	log.Println(d.FormatLogMessage(logMessage))
 }
 
 // FormatLogError formats a log error
-func (d DefaultLogger) FormatLogError(log *LogError) string {
-	return strings.Join([]string{d.FormattedName, utils.AddParentheses(StatusFailed.String()), log.String()}, ": ")
+func (d DefaultLogger) FormatLogError(logError *LogError) string {
+	return strings.Join([]string{d.FormattedName, utils.AddParentheses(StatusFailed.String()), logError.String()}, " - ")
 }
 
 // LogError logs an error
-func (d DefaultLogger) LogError(log *LogError) {
-	fmt.Println(d.FormatLogError(log))
+func (d DefaultLogger) LogError(logError *LogError) {
+	log.Println(d.FormatLogError(logError))
 }

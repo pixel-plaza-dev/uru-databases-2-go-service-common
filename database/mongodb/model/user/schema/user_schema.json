@@ -2,12 +2,19 @@
   "$jsonSchema": {
     "bsonType": "object",
     "required": [
+      "uuid",
       "first_name",
       "last_name",
       "username",
       "hashed_password"
     ],
     "properties": {
+      "uuid": {
+        "bsonType": "string",
+        "description": "must be a string and is required",
+        "minLength": 36,
+        "maxLength": 36
+      },
       "first_name": {
         "bsonType": "string",
         "description": "must be a string and is required",

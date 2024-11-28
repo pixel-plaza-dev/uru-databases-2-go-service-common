@@ -15,13 +15,7 @@ type User struct {
 	DeletedAt      time.Time          `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
 	Birthdate      time.Time          `json:"birthdate,omitempty" bson:"birthdate,omitempty"`
 	JoinedAt       time.Time          `json:"joined_at" bson:"joined_at"`
-}
-
-// UserSharedIdentifier is the MongoDB for the user shared identifier entity
-type UserSharedIdentifier struct {
-	ID     primitive.ObjectID `json:"id" bson:"_id"`
-	UserID primitive.ObjectID `json:"user_id" bson:"user_id"`
-	UUID   string             `json:"uuid" bson:"uuid"`
+	UUID           string             `json:"uuid" bson:"uuid"`
 }
 
 // UserEmail is the MongoDB for the user email entity

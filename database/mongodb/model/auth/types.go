@@ -20,17 +20,9 @@ type JwtRefreshToken struct {
 	UserID               primitive.ObjectID `json:"user_id" bson:"user_id"`
 	UserLogInAttemptID   primitive.ObjectID `json:"user_log_in_attempt_id" bson:"user_log_in_attempt_id"`
 	ParentRefreshTokenID primitive.ObjectID `json:"parent_refresh_token_id" bson:"parent_refresh_token_id"`
-	CreatedAt            time.Time          `json:"created_at" bson:"created_at"`
+	IssuedAt             time.Time          `json:"issued_at" bson:"issued_at"`
 	ExpiresAt            time.Time          `json:"expires_at" bson:"expires_at"`
 	RevokedAt            time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
-}
-
-// JwtRefreshTokenLog is the struct for the JWT refresh token log
-type JwtRefreshTokenLog struct {
-	ID                primitive.ObjectID `json:"id" bson:"_id"`
-	JwtRefreshTokenID primitive.ObjectID `json:"jwt_refresh_token_id" bson:"jwt_refresh_token_id"`
-	IPv4Address       string             `json:"ipv4_address" bson:"ipv4_address"`
-	UsedAt            time.Time          `json:"used_at" bson:"used_at"`
 }
 
 // JwtAccessToken is the struct for the JWT access token
@@ -38,17 +30,9 @@ type JwtAccessToken struct {
 	ID                primitive.ObjectID `json:"id" bson:"_id"`
 	UserID            primitive.ObjectID `json:"user_id" bson:"user_id"`
 	JwtRefreshTokenID primitive.ObjectID `json:"jwt_refresh_token_id" bson:"jwt_refresh_token_id"`
-	CreatedAt         time.Time          `json:"created_at" bson:"created_at"`
+	IssuedAt          time.Time          `json:"issued_at" bson:"issued_at"`
 	ExpiresAt         time.Time          `json:"expires_at" bson:"expires_at"`
 	RevokedAt         time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
-}
-
-// JwtAccessTokenLog is the struct for the JWT access token log
-type JwtAccessTokenLog struct {
-	ID               primitive.ObjectID `json:"id" bson:"_id"`
-	JwtAccessTokenID primitive.ObjectID `json:"jwt_access_token_id" bson:"jwt_access_token_id"`
-	IPv4Address      string             `json:"ipv4_address" bson:"ipv4_address"`
-	UsedAt           time.Time          `json:"used_at" bson:"used_at"`
 }
 
 // UserRole is the struct for the user role

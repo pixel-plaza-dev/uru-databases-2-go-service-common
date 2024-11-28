@@ -14,6 +14,7 @@ type User struct {
 	HashedPassword string             `json:"hashed_password" bson:"hashed_password"`
 	DeletedAt      time.Time          `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
 	Birthdate      time.Time          `json:"birthdate,omitempty" bson:"birthdate,omitempty"`
+	JoinedAt       time.Time          `json:"joined_at" bson:"joined_at"`
 }
 
 // UserSharedIdentifier is the MongoDB for the user shared identifier entity

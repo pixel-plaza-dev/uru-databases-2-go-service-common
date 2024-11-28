@@ -39,6 +39,10 @@
       "deleted_at": {
         "bsonType": "date",
         "description": "must be a date"
+      },
+      "joined_at": {
+        "bsonType": "date",
+        "description": "must be a date"
       }
     }
   }

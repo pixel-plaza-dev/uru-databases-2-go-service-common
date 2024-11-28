@@ -10,4 +10,5 @@ var (
 	MissingTokenClaimsSharedUserIdError = errors.New("missing token claims shared user id")
 	MissingTokenClaimsIdError           = errors.New("missing token claims id")
 	UnexpectedTokenClaimsTypeError      = errors.New("unexpected token claims type")
+	FailedToGetPeerFromContextError     = errors.New("failed to get peer from context")
 )

@@ -5,6 +5,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
+	"google.golang.org/grpc/peer"
+	"net"
+	"strings"
 )
 
 // SetCtxTokenString sets the token string to the context
@@ -13,7 +16,10 @@ func SetCtxTokenString(ctx context.Context, token string) context.Context {
 }
 
 // SetCtxTokenClaims sets the token claims to the context
-func SetCtxTokenClaims(ctx context.Context, claims *jwt.MapClaims) context.Context {
+func SetCtxTokenClaims(
+	ctx context.Context,
+	claims *jwt.MapClaims,
+) context.Context {
 	return context.WithValue(ctx, grpc.CtxTokenClaimsKey, claims)
 }
 
@@ -77,7 +83,7 @@ func GetCtxTokenClaimsSharedUserId(ctx context.Context) (string, error) {
 	// Get the shared user ID from the claims
 	sharedUserId, ok := (*claims)[commonjwt.UserSharedIdClaim].(string)
 	if !ok {
-		return "", MissingTokenClaimsUserIdError
+		return "", MissingTokenClaimsSharedUserIdError
 	}
 	return sharedUserId, nil
 }
@@ -96,4 +102,24 @@ func GetCtxTokenClaimsJwtId(ctx context.Context) (string, error) {
 		return "", MissingTokenClaimsIdError
 	}
 	return jwtId, nil
+}
+
+// GetClientIP extracts the client IP address from the context
+func GetClientIP(ctx context.Context) (string, error) {
+	p, ok := peer.FromContext(ctx)
+	if !ok {
+		return "", FailedToGetPeerFromContextError
+	}
+
+	// Get the IP address from the peer address
+	addr := p.Addr.String()
+	ip, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		return "", err
+	}
+
+	// Remove any surrounding brackets from IPv6 addresses
+	ip = strings.Trim(ip, "[]")
+
+	return ip, nil
 }

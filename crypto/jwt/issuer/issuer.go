@@ -33,13 +33,26 @@ func NewDefaultIssuer(privateKey []byte) (*DefaultIssuer, error) {
 	}, nil
 }
 
+// GetExpirationTime returns the expiration time for the given duration
+func (i *DefaultIssuer) GetExpirationTime(
+	issuedTime time.Time,
+	duration time.Duration,
+) time.Time {
+	return issuedTime.Add(duration)
+}
+
 // GenerateClaims generates a new claims object
 func (i *DefaultIssuer) GenerateClaims(
-	jwtId string, userId string, userUUID uuid.UUID, expirationTime time.Time, isRefreshToken bool,
+	jwtId string,
+	userId string,
+	userUUID uuid.UUID,
+	issuedTime time.Time,
+	expirationTime time.Time,
+	isRefreshToken bool,
 ) *jwt.MapClaims {
 	return &jwt.MapClaims{
 		"exp":                         expirationTime.Unix(),
-		"iat":                         time.Now().Unix(),
+		"iat":                         issuedTime.Unix(),
 		commonjwt.IdClaim:             jwtId,
 		commonjwt.UserIdClaim:         userId,
 		commonjwt.UserSharedIdClaim:   userUUID.String(),

@@ -20,13 +20,13 @@ func GenerateClaims(
 	jwtId string,
 	userId string,
 	userUUID uuid.UUID,
-	issuedTime time.Time,
-	expirationTime time.Time,
+	issuedAt time.Time,
+	expirationAt time.Time,
 	isRefreshToken bool,
 ) *jwt.MapClaims {
 	return &jwt.MapClaims{
-		"exp":                         expirationTime.Unix(),
-		"iat":                         issuedTime.Unix(),
+		"exp":                         expirationAt.Unix(),
+		"iat":                         issuedAt.Unix(),
 		commonjwt.IdClaim:             jwtId,
 		commonjwt.UserIdClaim:         userId,
 		commonjwt.UserSharedIdClaim:   userUUID.String(),

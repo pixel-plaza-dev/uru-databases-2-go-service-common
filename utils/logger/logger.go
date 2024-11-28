@@ -125,7 +125,13 @@ func (d DefaultLogger) LogMessage(logMessage *LogMessage) {
 
 // FormatLogError formats a log error
 func (d DefaultLogger) FormatLogError(logError *LogError) string {
-	return strings.Join([]string{d.FormattedName, utils.AddParentheses(StatusFailed.String()), logError.String()}, " - ")
+	return strings.Join(
+		[]string{
+			d.FormattedName,
+			FormatStatus(StatusFailed),
+			logError.String(),
+		}, " - ",
+	)
 }
 
 // LogError logs an error

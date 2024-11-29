@@ -37,9 +37,9 @@ func (i *DefaultIssuer) IssueToken(claims *jwt.MapClaims) (string, error) {
 	token := jwt.NewWithClaims(&jwt.SigningMethodEd25519{}, claims)
 
 	// Sign and get the complete encoded token as a string using the private key
-	tokenString, err := token.SignedString(i.key)
+	tokenString, err := token.SignedString(*i.key)
 	if err != nil {
-		return "", commonjwt.UnableToIssueTokenError
+		return "", err
 	}
 
 	return tokenString, nil

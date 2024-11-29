@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// UserLogInAttempt is the struct for the user log in attempt
+// UserLogInAttempt is the struct for the user log in attempt entity
 type UserLogInAttempt struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id"`
 	UserID       primitive.ObjectID `json:"user_id" bson:"user_id"`
@@ -14,18 +14,18 @@ type UserLogInAttempt struct {
 	IsSuccessful bool               `json:"is_successful" bson:"is_successful"`
 }
 
-// JwtRefreshToken is the struct for the JWT refresh token
+// JwtRefreshToken is the struct for the JWT refresh token entity
 type JwtRefreshToken struct {
 	ID                   primitive.ObjectID `json:"id" bson:"_id"`
 	UserID               primitive.ObjectID `json:"user_id" bson:"user_id"`
-	UserLogInAttemptID   primitive.ObjectID `json:"user_log_in_attempt_id" bson:"user_log_in_attempt_id"`
-	ParentRefreshTokenID primitive.ObjectID `json:"parent_refresh_token_id" bson:"parent_refresh_token_id"`
+	UserLogInAttemptID   primitive.ObjectID `json:"user_log_in_attempt_id,omitempty" bson:"user_log_in_attempt_id,omitempty"`
+	ParentRefreshTokenID primitive.ObjectID `json:"parent_refresh_token_id,omitempty" bson:"parent_refresh_token_id,omitempty"`
 	IssuedAt             time.Time          `json:"issued_at" bson:"issued_at"`
 	ExpiresAt            time.Time          `json:"expires_at" bson:"expires_at"`
 	RevokedAt            time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// JwtAccessToken is the struct for the JWT access token
+// JwtAccessToken is the struct for the JWT access token entity
 type JwtAccessToken struct {
 	ID                primitive.ObjectID `json:"id" bson:"_id"`
 	UserID            primitive.ObjectID `json:"user_id" bson:"user_id"`
@@ -35,7 +35,7 @@ type JwtAccessToken struct {
 	RevokedAt         time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// UserRole is the struct for the user role
+// UserRole is the struct for the user role entity
 type UserRole struct {
 	ID               primitive.ObjectID `json:"id" bson:"_id"`
 	UserID           primitive.ObjectID `json:"user_id" bson:"user_id"`
@@ -46,7 +46,7 @@ type UserRole struct {
 	RevokedAt        time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// Role is the struct for the role
+// Role is the struct for the role entity
 type Role struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id"`
 	CreatedByUserID primitive.ObjectID `json:"created_by_user_id" bson:"created_by_user_id"`
@@ -57,7 +57,7 @@ type Role struct {
 	RevokedAt       time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// RolePermission is the struct for the role permission
+// RolePermission is the struct for the role permission entity
 type RolePermission struct {
 	ID               primitive.ObjectID `json:"id" bson:"_id"`
 	AssignedByUserID primitive.ObjectID `json:"assigned_by_user_id" bson:"assigned_by_user_id"`
@@ -68,7 +68,7 @@ type RolePermission struct {
 	RevokedAt        time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// Permission is the struct for the permission
+// Permission is the struct for the permission entity
 type Permission struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id"`
 	CreatedByUserID primitive.ObjectID `json:"created_by_user_id" bson:"created_by_user_id"`

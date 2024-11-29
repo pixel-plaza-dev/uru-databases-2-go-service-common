@@ -15,5 +15,20 @@ func NewLogger(logger commonlogger.Logger) Logger {
 
 // ValidatedToken logs a message when the server validates a token
 func (l Logger) ValidatedToken() {
-	l.logger.LogMessage(commonlogger.NewLogMessage("Validated token", commonlogger.StatusInfo))
+	l.logger.LogMessage(
+		commonlogger.NewLogMessage(
+			"Validated token",
+			commonlogger.StatusInfo,
+		),
+	)
+}
+
+// MissingTokenClaimsUserId logs the missing token claims user ID
+func (l Logger) MissingTokenClaimsUserId() {
+	l.logger.LogMessage(
+		commonlogger.NewLogMessage(
+			"Missing  user ID in token claims",
+			commonlogger.StatusFailed,
+		),
+	)
 }

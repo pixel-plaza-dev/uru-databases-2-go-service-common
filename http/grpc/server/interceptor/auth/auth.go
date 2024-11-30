@@ -4,7 +4,7 @@ import (
 	"context"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpcserverctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/server/context"
-	pbinterceptionsgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/interceptions/grpc"
+	pbconfiggrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/grpc"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -22,14 +22,14 @@ type (
 	// Interceptor is the interceptor for the authentication
 	Interceptor struct {
 		validator         commonvalidator.Validator
-		grpcInterceptions *map[pbtypesgrpc.Method]pbinterceptionsgrpc.Interception
+		grpcInterceptions *map[pbtypesgrpc.Method]pbconfiggrpc.Interception
 	}
 )
 
 // NewInterceptor creates a new authentication interceptor
 func NewInterceptor(
 	validator commonvalidator.Validator,
-	grpcInterceptions *map[pbtypesgrpc.Method]pbinterceptionsgrpc.Interception,
+	grpcInterceptions *map[pbtypesgrpc.Method]pbconfiggrpc.Interception,
 ) (*Interceptor, error) {
 	// Check if gRPC interceptions is nil
 	if grpcInterceptions == nil {
@@ -64,7 +64,7 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 		interception, ok := (*i.grpcInterceptions)[pbtypesgrpc.NewMethod(
 			methodName,
 		)]
-		if !ok || interception == pbinterceptionsgrpc.None {
+		if !ok || interception == pbconfiggrpc.None {
 			return handler(ctx, req)
 		}
 

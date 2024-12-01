@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
-	pbconfiggrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/grpc"
+	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/grpc"
 )
 
 // Validator does parsing and validation of JWT token
@@ -16,7 +16,7 @@ type (
 		GetClaims(tokenString string) (*jwt.MapClaims, error)
 		GetValidatedClaims(
 			token string,
-			interception pbconfiggrpc.Interception,
+			interception pbtypesgrpc.Interception,
 		) (*jwt.MapClaims, error)
 	}
 
@@ -101,7 +101,7 @@ func (d *DefaultValidator) GetClaims(tokenString string) (
 func (d *DefaultValidator) ValidateClaims(
 	token string,
 	claims *jwt.MapClaims,
-	interception pbconfiggrpc.Interception,
+	interception pbtypesgrpc.Interception,
 ) (*jwt.MapClaims, error) {
 	// Check if is a refresh token
 	irt, ok := (*claims)[commonjwt.IsRefreshTokenClaim].(bool)
@@ -116,12 +116,12 @@ func (d *DefaultValidator) ValidateClaims(
 	}
 
 	// Check if it must be a refresh token
-	if !irt && interception == pbconfiggrpc.RefreshToken {
+	if !irt && interception == pbtypesgrpc.RefreshToken {
 		return nil, commonjwt.MustBeRefreshTokenError
 	}
 
 	// Check if it must be an access token
-	if irt && interception == pbconfiggrpc.AccessToken {
+	if irt && interception == pbtypesgrpc.AccessToken {
 		return nil, commonjwt.MustBeAccessTokenError
 	}
 
@@ -140,7 +140,7 @@ func (d *DefaultValidator) ValidateClaims(
 // GetValidatedClaims parses, validates and returns the claims of the given JWT token string
 func (d *DefaultValidator) GetValidatedClaims(
 	token string,
-	interception pbconfiggrpc.Interception,
+	interception pbtypesgrpc.Interception,
 ) (
 	*jwt.MapClaims, error,
 ) {

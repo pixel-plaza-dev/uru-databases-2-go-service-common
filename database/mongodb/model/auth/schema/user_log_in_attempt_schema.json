@@ -14,7 +14,7 @@
       "ipv4_address": {
         "bsonType": "string",
         "description": "must be a string and is required",
-        "minLength": 7,
+        "minLength": 3,
         "maxLength": 15
       },
       "attempted_at": {

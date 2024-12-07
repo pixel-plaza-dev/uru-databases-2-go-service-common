@@ -115,6 +115,10 @@ func NewDefaultLogger(name string) DefaultLogger {
 
 // FormatLogMessage formats a log message
 func (d DefaultLogger) FormatLogMessage(logMessage *LogMessage) string {
+	if logMessage == nil {
+		return d.FormattedName
+	}
+
 	return strings.Join([]string{d.FormattedName, logMessage.String()}, " - ")
 }
 
@@ -125,6 +129,10 @@ func (d DefaultLogger) LogMessage(logMessage *LogMessage) {
 
 // FormatLogError formats a log error
 func (d DefaultLogger) FormatLogError(logError *LogError) string {
+	if logError == nil {
+		return d.FormattedName
+	}
+
 	return strings.Join(
 		[]string{
 			d.FormattedName,

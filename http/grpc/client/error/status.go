@@ -9,13 +9,18 @@ import (
 )
 
 // ExtractErrorFromStatus extracts the error from the status
-func ExtractErrorFromStatus(flag *commonflag.ModeFlag, err error) error {
+func ExtractErrorFromStatus(mode *commonflag.ModeFlag, err error) error {
+	// Check if the flag mode is nil
+	if mode == nil {
+		return commonflag.NilFlagError
+	}
+
 	st, ok := status.FromError(err)
 
 	// Check if the error is a status error
 	if !ok {
 		// Check the flag mode
-		if flag.IsProd() {
+		if mode.IsProd() {
 			return commongrpc.InternalServerError
 		}
 		return err

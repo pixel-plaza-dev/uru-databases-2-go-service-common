@@ -10,8 +10,13 @@ type Logger struct {
 }
 
 // NewLogger is the logger for the database connection
-func NewLogger(logger commonlogger.Logger) Logger {
-	return Logger{logger: logger}
+func NewLogger(logger commonlogger.Logger) (*Logger, error) {
+	// Check if the logger is nil
+	if logger == nil {
+		return nil, commonlogger.NilLoggerError
+	}
+
+	return &Logger{logger: logger}, nil
 }
 
 // ConnectedToDatabase logs a success message when the server connects to the database

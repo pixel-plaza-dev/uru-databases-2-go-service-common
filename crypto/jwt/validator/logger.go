@@ -9,8 +9,13 @@ type Logger struct {
 }
 
 // NewLogger creates a new JWT validator logger
-func NewLogger(logger commonlogger.Logger) Logger {
-	return Logger{logger: logger}
+func NewLogger(logger commonlogger.Logger) (*Logger, error) {
+	// Check if the logger is nil
+	if logger == nil {
+		return nil, commonlogger.NilLoggerError
+	}
+
+	return &Logger{logger: logger}, nil
 }
 
 // ValidatedToken logs a message when the server validates a token

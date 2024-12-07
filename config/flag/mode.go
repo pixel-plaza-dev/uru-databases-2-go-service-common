@@ -2,33 +2,21 @@ package flag
 
 import (
 	"flag"
-	"fmt"
-	"strings"
 )
 
 // ModeFlag is a custom flag type for mode
 type ModeFlag struct {
-	value   string
-	allowed []string
+	Flag
 }
 
-// String returns the string representation of the flag value
-func (m *ModeFlag) String() string {
-	return m.value
-}
-
-// Set validates and sets the flag value
-func (m *ModeFlag) Set(value string) error {
-	for _, v := range m.allowed {
-		if value == v {
-			m.value = value
-			return nil
-		}
+// NewModeFlag creates a new ModeFlag with allowed values
+func NewModeFlag(defaultValue string, allowed []string) *ModeFlag {
+	return &ModeFlag{
+		Flag: Flag{
+			value:   defaultValue,
+			allowed: allowed,
+		},
 	}
-	return fmt.Errorf(
-		"invalid value %q, allowed values are: %s", value,
-		strings.Join(m.allowed, ", "),
-	)
 }
 
 // IsDev returns true if the mode is development
@@ -39,14 +27,6 @@ func (m *ModeFlag) IsDev() bool {
 // IsProd returns true if the mode is production
 func (m *ModeFlag) IsProd() bool {
 	return m.value == ModeProd
-}
-
-// NewModeFlag creates a new ModeFlag with allowed values
-func NewModeFlag(defaultValue string, allowed []string) *ModeFlag {
-	return &ModeFlag{
-		value:   defaultValue,
-		allowed: allowed,
-	}
 }
 
 const (

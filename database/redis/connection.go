@@ -29,7 +29,12 @@ type (
 )
 
 // NewDefaultConnectionHandler creates a new connection
-func NewDefaultConnectionHandler(config *Config) DefaultConnectionHandler {
+func NewDefaultConnectionHandler(config *Config) (*DefaultConnectionHandler, error) {
+	// Check if the config is nil
+	if config == nil {
+		return nil, NilConfigError
+	}
+
 	// Define the Redis options
 	clientOptions := &redis.Options{
 		Addr:     config.Uri,
@@ -37,10 +42,10 @@ func NewDefaultConnectionHandler(config *Config) DefaultConnectionHandler {
 		DB:       config.Database,
 	}
 
-	return DefaultConnectionHandler{
+	return &DefaultConnectionHandler{
 		ClientOptions: clientOptions,
 		Client:        nil,
-	}
+	}, nil
 }
 
 // Connect returns a new Redis client

@@ -38,7 +38,11 @@ func (d DefaultValidator) ValidateEmail(emailField string, email string, validat
 }
 
 // ValidateBirthdate validates the birthdate field
-func (d DefaultValidator) ValidateBirthdate(birthdateField string, birthdate *timestamppb.Timestamp, validations *map[string][]error) {
+func (d DefaultValidator) ValidateBirthdate(
+	birthdateField string,
+	birthdate *timestamppb.Timestamp,
+	validations *map[string][]error,
+) {
 	if birthdate == nil || birthdate.AsTime().After(time.Now()) {
 		(*validations)[birthdateField] = append(
 			(*validations)[birthdateField],
@@ -48,18 +52,20 @@ func (d DefaultValidator) ValidateBirthdate(birthdateField string, birthdate *ti
 }
 
 // ValidateNonEmptyStringFields validates the non-empty string fields
-func (d DefaultValidator) ValidateNonEmptyStringFields(request interface{}, fieldsToValidate *map[string]string) *map[string][]error {
+func (d DefaultValidator) ValidateNonEmptyStringFields(
+	request interface{},
+	fieldsToValidate *map[string]string,
+) (*map[string][]error, error) {
 	// Create the validations map
 	validations := make(map[string][]error)
 
 	// Check if the required string fields are empty
-	commonvalidator.ValidNonEmptyStringFields(
+	err := commonvalidator.ValidNonEmptyStringFields(
 		&validations,
 		request,
 		fieldsToValidate,
 	)
-
-	return &validations
+	return &validations, err
 }
 
 // CheckValidations checks if there are any validations

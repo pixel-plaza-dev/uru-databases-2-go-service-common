@@ -3,10 +3,13 @@ package auth
 import (
 	"context"
 	"errors"
+	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/oauth"
+	"google.golang.org/grpc/status"
 )
 
 type (
@@ -23,6 +26,11 @@ type (
 
 // NewInterceptor creates a new authentication interceptor
 func NewInterceptor(tokenSource *oauth.TokenSource) (*Interceptor, error) {
+	// Check if the token source is nil
+	if tokenSource == nil {
+		return nil, commongcloud.NilTokenSourceError
+	}
+
 	// Get the access token from the token source
 	token, err := tokenSource.Token()
 	if err != nil {
@@ -68,17 +76,22 @@ func (i *Interceptor) Authenticate() grpc.UnaryClientInterceptor {
 		var ctxMetadata *commongrpcctx.CtxMetadata
 		if err == nil {
 			// Create the authenticated context metadata
-			ctxMetadata = commongrpcctx.NewAuthenticatedCtxMetadata(
+			ctxMetadata, err = commongrpcctx.NewAuthenticatedCtxMetadata(
 				i.accessToken, jwtToken,
 			)
 		} else {
 			// Check if the error is a missing token error
 			if errors.Is(err, MissingTokenError) {
 				// Create the unauthenticated context metadata
-				ctxMetadata = commongrpcctx.NewUnauthenticatedCtxMetadata(i.accessToken)
+				ctxMetadata, err = commongrpcctx.NewUnauthenticatedCtxMetadata(i.accessToken)
 			} else {
-				return err
+				return status.New(codes.Aborted, err.Error()).Err()
 			}
+		}
+
+		// Check if there was an error
+		if err != nil {
+			return status.New(codes.Aborted, err.Error()).Err()
 		}
 
 		// Get the gRPC client context with the metadata

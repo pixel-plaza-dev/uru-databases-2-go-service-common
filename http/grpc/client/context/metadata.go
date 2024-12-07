@@ -22,11 +22,15 @@ type (
 )
 
 // NewCtxMetadata creates a new CtxMetadata
-func NewCtxMetadata(metadataFields map[string]string) *CtxMetadata {
-	var fields []MetadataField
+func NewCtxMetadata(metadataFields *map[string]string) (*CtxMetadata, error) {
+	// Check if the metadata fields are nil
+	if metadataFields == nil {
+		return nil, NilMetadataFieldsError
+	}
 
 	// Add the metadata fields
-	for key, value := range metadataFields {
+	var fields []MetadataField
+	for key, value := range *metadataFields {
 		fields = append(
 			fields,
 			MetadataField{Key: strings.ToLower(key), Value: value},
@@ -35,13 +39,13 @@ func NewCtxMetadata(metadataFields map[string]string) *CtxMetadata {
 
 	return &CtxMetadata{
 		MetadataFields: fields,
-	}
+	}, nil
 }
 
 // NewUnauthenticatedCtxMetadata creates a new unauthenticated CtxMetadata
-func NewUnauthenticatedCtxMetadata(gcloudToken string) *CtxMetadata {
+func NewUnauthenticatedCtxMetadata(gcloudToken string) (*CtxMetadata, error) {
 	return NewCtxMetadata(
-		map[string]string{
+		&map[string]string{
 			commongcloud.AuthorizationMetadataKey: commongrpc.BearerPrefix + " " + gcloudToken,
 		},
 	)
@@ -50,9 +54,9 @@ func NewUnauthenticatedCtxMetadata(gcloudToken string) *CtxMetadata {
 // NewAuthenticatedCtxMetadata creates a new authenticated CtxMetadata
 func NewAuthenticatedCtxMetadata(
 	gcloudToken string, jwtToken string,
-) *CtxMetadata {
+) (*CtxMetadata, error) {
 	return NewCtxMetadata(
-		map[string]string{
+		&map[string]string{
 			commongcloud.AuthorizationMetadataKey: commongrpc.BearerPrefix + " " + gcloudToken,
 			commongrpc.AuthorizationMetadataKey:   commongrpc.BearerPrefix + " " + jwtToken,
 		},

@@ -2,7 +2,9 @@ package auth
 
 import (
 	"context"
+	"errors"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	commongrpcserverctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/server/context"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	"google.golang.org/grpc"
@@ -30,7 +32,10 @@ func NewInterceptor(
 	validator commonvalidator.Validator,
 	grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 ) (*Interceptor, error) {
-	// Check if gRPC interceptions is nil
+	// Check if either the validator or the gRPC interceptions is nil
+	if validator == nil {
+		return nil, commonvalidator.NilValidatorError
+	}
 	if grpcInterceptions == nil {
 		return nil, GRPCInterceptionsNilError
 	}
@@ -81,8 +86,11 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 
 		// Validate the token and get the validated claims
 		claims, err := i.validator.GetValidatedClaims(tokenString, interception)
-		if err != nil {
+		if err != nil && errors.Is(err, commonvalidator.NilJwtClaimsError) {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
+		}
+		if err != nil {
+			return nil, commongrpc.InternalServerError
 		}
 
 		// Set the token string and token claims to the context

@@ -32,17 +32,22 @@ type (
 )
 
 // NewDefaultConnectionHandler creates a new connection
-func NewDefaultConnectionHandler(config *Config) DefaultConnectionHandler {
+func NewDefaultConnectionHandler(config *Config) (*DefaultConnectionHandler, error) {
+	// Check if the config is nil
+	if config == nil {
+		return nil, NilClientError
+	}
+
 	// Set client options
 	ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
 	clientOptions := options.Client().ApplyURI(config.Uri)
 
-	return DefaultConnectionHandler{
+	return &DefaultConnectionHandler{
 		Cancel:        cancel,
 		Ctx:           ctx,
 		ClientOptions: clientOptions,
 		Client:        nil,
-	}
+	}, nil
 }
 
 // Connect returns a new MongoDB client

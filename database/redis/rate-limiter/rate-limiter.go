@@ -24,12 +24,17 @@ type (
 )
 
 // NewDefaultRateLimiter creates a new rate limiter
-func NewDefaultRateLimiter(redisClient *redis.Client, limit int, period time.Duration) *DefaultRateLimiter {
+func NewDefaultRateLimiter(redisClient *redis.Client, limit int, period time.Duration) (*DefaultRateLimiter, error) {
+	// Check if the Redis client is nil
+	if redisClient == nil {
+		return nil, commonredis.NilClientError
+	}
+
 	return &DefaultRateLimiter{
 		redisClient: redisClient,
 		limit:       limit,
 		period:      period,
-	}
+	}, nil
 }
 
 // GetKey gets the rate limiter key

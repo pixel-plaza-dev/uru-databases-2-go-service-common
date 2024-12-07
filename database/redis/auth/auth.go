@@ -24,8 +24,13 @@ type (
 )
 
 // NewDefaultTokenValidator creates a new token validator
-func NewDefaultTokenValidator(redisClient *redis.Client) *DefaultTokenValidator {
-	return &DefaultTokenValidator{redisClient: redisClient}
+func NewDefaultTokenValidator(redisClient *redis.Client) (*DefaultTokenValidator, error) {
+	// Check if the Redis client is nil
+	if redisClient == nil {
+		return nil, commonredis.NilClientError
+	}
+
+	return &DefaultTokenValidator{redisClient: redisClient}, nil
 }
 
 // GetKey gets the JWT Identifier key

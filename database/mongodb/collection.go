@@ -106,9 +106,24 @@ func (c *Collection) CreateCollection(database *mongo.Database) (
 	return collection, nil
 }
 
-// CreateIndexes creates the indexes for the collection
+// createIndexes creates the indexes for the collection
 func (c *Collection) createIndexes(collection *mongo.Collection) (err error) {
 	// Create the single field indexes
+	if err = c.createSingleFieldIndexes(collection); err != nil {
+		return err
+	}
+
+	// Create the compound indexes
+	if err = c.createCompoundIndexes(collection); err != nil {
+		return err
+	}
+	return nil
+}
+
+// createSingleFieldIndexes creates the single field indexes for the collection
+func (c *Collection) createSingleFieldIndexes(collection *mongo.Collection) (
+	err error,
+) {
 	if c.SingleFieldIndexes != nil {
 		for _, singleFieldIndex := range *c.SingleFieldIndexes {
 			_, err = collection.Indexes().CreateOne(
@@ -119,13 +134,19 @@ func (c *Collection) createIndexes(collection *mongo.Collection) (err error) {
 			}
 		}
 	}
+	return nil
+}
 
-	// Create the compound indexes
+// createCompoundIndexes creates the compound indexes for the collection
+func (c *Collection) createCompoundIndexes(collection *mongo.Collection) (
+	err error,
+) {
 	if c.CompoundIndexes != nil {
 		for _, compoundIndex := range *c.CompoundIndexes {
-			if _, err = collection.Indexes().CreateOne(
+			_, err = collection.Indexes().CreateOne(
 				context.Background(), *compoundIndex.Model,
-			); err != nil {
+			)
+			if err != nil {
 				return FailedToCreateCompoundIndexError
 			}
 		}

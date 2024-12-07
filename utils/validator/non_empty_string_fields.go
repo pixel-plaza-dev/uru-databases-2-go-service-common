@@ -6,9 +6,21 @@ import (
 
 // ValidNonEmptyStringFields validates if the string fields are empty
 func ValidNonEmptyStringFields(
-	validations *map[string][]error, data interface{},
+	validations *map[string][]error,
+	data interface{},
 	fields *map[string]string,
-) {
+) error {
+	// Check if either the validations, the data or the fields is nil
+	if validations == nil {
+		return NilValidationsError
+	}
+	if data == nil {
+		return NilDataError
+	}
+	if fields == nil {
+		return NilFieldsError
+	}
+
 	// Reflection of data
 	dataReflection := reflect.ValueOf(data)
 
@@ -41,4 +53,6 @@ func ValidNonEmptyStringFields(
 			)
 		}
 	}
+
+	return nil
 }

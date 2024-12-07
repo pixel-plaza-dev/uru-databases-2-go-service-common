@@ -3,5 +3,5 @@ package rate_limiter
 import "errors"
 
 var (
-	TooManyRequestsError = errors.New("Too many requests")
+	TooManyRequestsError = errors.New("too many requests")
 )

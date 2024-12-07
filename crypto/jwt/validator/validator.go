@@ -2,7 +2,6 @@ package validator
 
 import (
 	"crypto"
-	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
@@ -57,16 +56,7 @@ func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 		},
 	)
 	if err != nil {
-		switch {
-		case errors.Is(err, commonjwt.UnexpectedSigningMethodError):
-		case errors.Is(err, jwt.ErrSignatureInvalid):
-		case errors.Is(err, jwt.ErrTokenExpired):
-		case errors.Is(err, jwt.ErrTokenNotValidYet):
-		case errors.Is(err, jwt.ErrTokenMalformed):
-			return nil, err
-		default:
-			return nil, commonjwt.InvalidTokenError
-		}
+		return nil, err
 	}
 
 	// Check if the token is valid

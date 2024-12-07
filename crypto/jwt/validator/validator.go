@@ -1,11 +1,13 @@
 package validator
 
 import (
-	"crypto"
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
+	"golang.org/x/crypto/ed25519"
 )
 
 // Validator does parsing and validation of JWT token
@@ -21,14 +23,15 @@ type (
 
 	// DefaultValidator struct
 	DefaultValidator struct {
-		key            *crypto.PublicKey
-		TokenValidator commonjwtvalidatorgrpc.TokenValidator
+		ed25519Key     *ed25519.PublicKey
+		tokenValidator commonjwtvalidatorgrpc.TokenValidator
+		mode           *commonflag.ModeFlag
 	}
 )
 
 // NewDefaultValidator returns a new validator by parsing the given file path as an ED25519 public key
 func NewDefaultValidator(
-	publicKey []byte, tokenValidator commonjwtvalidatorgrpc.TokenValidator,
+	publicKey []byte, tokenValidator commonjwtvalidatorgrpc.TokenValidator, mode *commonflag.ModeFlag,
 ) (*DefaultValidator, error) {
 	// Parse the public key
 	key, err := jwt.ParseEdPublicKeyFromPEM(publicKey)
@@ -36,9 +39,16 @@ func NewDefaultValidator(
 		return nil, commonjwt.UnableToParsePublicKeyError
 	}
 
+	// Ensure the key is of type ED25519 public key
+	ed25519Key, ok := key.(ed25519.PublicKey)
+	if !ok {
+		return nil, commonjwt.InvalidKeyTypeError
+	}
+
 	return &DefaultValidator{
-		key:            &key,
-		TokenValidator: tokenValidator,
+		ed25519Key:     &ed25519Key,
+		tokenValidator: tokenValidator,
+		mode:           mode,
 	}, nil
 }
 
@@ -50,18 +60,31 @@ func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 		func(token *jwt.Token) (interface{}, error) {
 			// Check to see if the token uses the expected signing method
 			if _, ok := token.Method.(*jwt.SigningMethodEd25519); !ok {
-				return nil, commonjwt.UnexpectedSigningMethodError
+				return nil, UnexpectedSigningMethodError
 			}
-			return d.key, nil
+			return d.ed25519Key, nil
 		},
 	)
 	if err != nil {
-		return nil, err
+		if d.mode.IsDev() {
+			return nil, err
+		}
+
+		switch {
+		case errors.Is(err, UnexpectedSigningMethodError):
+		case errors.Is(err, jwt.ErrSignatureInvalid):
+		case errors.Is(err, jwt.ErrTokenExpired):
+		case errors.Is(err, jwt.ErrTokenNotValidYet):
+		case errors.Is(err, jwt.ErrTokenMalformed):
+			return nil, err
+		default:
+			return nil, InvalidTokenError
+		}
 	}
 
 	// Check if the token is valid
 	if !token.Valid {
-		return nil, commonjwt.InvalidTokenError
+		return nil, InvalidTokenError
 	}
 
 	// Get the claims from the token
@@ -81,7 +104,7 @@ func (d *DefaultValidator) GetClaims(tokenString string) (
 	// Get token claims
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, commonjwt.InvalidClaimsError
+		return nil, InvalidClaimsError
 	}
 
 	return &claims, nil
@@ -96,32 +119,32 @@ func (d *DefaultValidator) ValidateClaims(
 	// Check if is a refresh token
 	irt, ok := (*claims)[commonjwt.IsRefreshTokenClaim].(bool)
 	if !ok {
-		return nil, commonjwt.IRTNotValidError
+		return nil, IRTNotValidError
 	}
 
 	// Get the JWT Identifier
 	jwtId, ok := (*claims)[commonjwt.IdClaim].(string)
 	if !ok {
-		return nil, commonjwt.IdentifierNotValidError
+		return nil, IdentifierNotValidError
 	}
 
 	// Check if it must be a refresh token
 	if !irt && interception == pbtypesgrpc.RefreshToken {
-		return nil, commonjwt.MustBeRefreshTokenError
+		return nil, MustBeRefreshTokenError
 	}
 
 	// Check if it must be an access token
 	if irt && interception == pbtypesgrpc.AccessToken {
-		return nil, commonjwt.MustBeAccessTokenError
+		return nil, MustBeAccessTokenError
 	}
 
 	// Check if the token is valid
-	isValid, err := d.TokenValidator.IsTokenValid(token, jwtId, irt)
+	isValid, err := d.tokenValidator.IsTokenValid(token, jwtId, irt)
 	if err != nil {
 		return nil, err
 	}
 	if !isValid {
-		return nil, commonjwt.InvalidTokenError
+		return nil, InvalidTokenError
 	}
 
 	return claims, nil

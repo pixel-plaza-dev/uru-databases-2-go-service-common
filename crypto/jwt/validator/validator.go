@@ -62,7 +62,7 @@ func (d *DefaultValidator) GetToken(tokenString string) (*jwt.Token, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodEd25519); !ok {
 				return nil, UnexpectedSigningMethodError
 			}
-			return d.ed25519Key, nil
+			return *d.ed25519Key, nil
 		},
 	)
 	if err != nil {

@@ -14,18 +14,11 @@ import (
 	"strings"
 )
 
-type (
-	// Authentication interface
-	Authentication interface {
-		Authenticate() grpc.UnaryServerInterceptor
-	}
-
-	// Interceptor is the interceptor for the authentication
-	Interceptor struct {
-		validator         commonvalidator.Validator
-		grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception
-	}
-)
+// Interceptor is the interceptor for the authentication
+type Interceptor struct {
+	validator         commonvalidator.Validator
+	grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception
+}
 
 // NewInterceptor creates a new authentication interceptor
 func NewInterceptor(

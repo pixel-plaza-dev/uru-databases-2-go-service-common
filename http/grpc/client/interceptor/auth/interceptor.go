@@ -12,17 +12,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type (
-	// Authentication interface
-	Authentication interface {
-		Authenticate() grpc.UnaryClientInterceptor
-	}
-
-	// Interceptor is the interceptor for the authentication
-	Interceptor struct {
-		accessToken string
-	}
-)
+// Interceptor is the interceptor for the authentication
+type Interceptor struct {
+	accessToken string
+}
 
 // NewInterceptor creates a new authentication interceptor
 func NewInterceptor(tokenSource *oauth.TokenSource) (*Interceptor, error) {

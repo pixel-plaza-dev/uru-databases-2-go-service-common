@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	NilFlagError = errors.New("flag cannot be nil")
+	NilModeFlagError = errors.New("mode flag cannot be nil")
 )

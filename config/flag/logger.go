@@ -4,6 +4,7 @@ import (
 	commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/logger"
 )
 
+// Logger is the logger for the flag
 type Logger struct {
 	logger commonlogger.Logger
 }

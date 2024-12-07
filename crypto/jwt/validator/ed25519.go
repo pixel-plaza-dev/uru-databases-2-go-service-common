@@ -26,7 +26,7 @@ func NewEd25519Validator(
 		return nil, commonjwtvalidatorgrpc.NilTokenValidatorError
 	}
 	if mode == nil {
-		return nil, commonflag.NilFlagError
+		return nil, commonflag.NilModeFlagError
 	}
 
 	// Parse the public key

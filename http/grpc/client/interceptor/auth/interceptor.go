@@ -64,6 +64,9 @@ func (i *Interceptor) Authenticate() grpc.UnaryClientInterceptor {
 	) error {
 		// Get the JWT token
 		jwtToken, err := i.GetCtxTokenString(ctx)
+		if err != nil {
+			return status.Error(codes.Aborted, err.Error())
+		}
 
 		// Create the context metadata
 		var ctxMetadata *commongrpcctx.CtxMetadata
@@ -78,13 +81,13 @@ func (i *Interceptor) Authenticate() grpc.UnaryClientInterceptor {
 				// Create the unauthenticated context metadata
 				ctxMetadata, err = commongrpcctx.NewUnauthenticatedCtxMetadata(i.accessToken)
 			} else {
-				return status.New(codes.Aborted, err.Error()).Err()
+				return status.Error(codes.Aborted, err.Error())
 			}
 		}
 
 		// Check if there was an error
 		if err != nil {
-			return status.New(codes.Aborted, err.Error()).Err()
+			return status.Error(codes.Aborted, err.Error())
 		}
 
 		// Get the gRPC client context with the metadata

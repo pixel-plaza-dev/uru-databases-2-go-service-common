@@ -2,20 +2,28 @@ package outgoing_ctx
 
 import (
 	"context"
+	commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/logger"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 // Interceptor is the interceptor for the debug
 type Interceptor struct {
-	logger Logger
+	logger *Logger
 }
 
 // NewInterceptor creates a new debug interceptor
-func NewInterceptor(logger Logger) *Interceptor {
+func NewInterceptor(logger *Logger) (*Interceptor, error) {
+	// Check if the logger is nil
+	if logger == nil {
+		return nil, commonlogger.NilLoggerError
+	}
+
 	return &Interceptor{
 		logger: logger,
-	}
+	}, nil
 }
 
 // PrintOutgoingCtx prints the outgoing context
@@ -31,7 +39,7 @@ func (i *Interceptor) PrintOutgoingCtx() grpc.UnaryClientInterceptor {
 		// Get the outgoing context
 		md, ok := metadata.FromOutgoingContext(ctx)
 		if !ok {
-			return FailedToGetOutgoingContextError
+			return status.Error(codes.Internal, FailedToGetOutgoingContextError.Error())
 		}
 
 		// Print the metadata

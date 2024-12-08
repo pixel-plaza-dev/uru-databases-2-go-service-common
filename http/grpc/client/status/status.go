@@ -12,7 +12,7 @@ import (
 func ExtractErrorFromStatus(mode *commonflag.ModeFlag, err error) (codes.Code, error) {
 	// Check if the flag mode is nil
 	if mode == nil {
-		return codes.Internal, commonflag.NilModeFlagError
+		return codes.Unknown, commonflag.NilModeFlagError
 	}
 
 	st, ok := status.FromError(err)

@@ -68,7 +68,7 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 		// Get metadata from the context
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
-			return nil, MetadataNotProvidedError
+			return nil, status.Error(codes.Unauthenticated, MetadataNotProvidedError.Error())
 		}
 
 		// Get the token from the metadata
@@ -83,7 +83,7 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}
 		if err != nil {
-			return nil, commongrpc.InternalServerError
+			return nil, status.Error(codes.Internal, commongrpc.InternalServerError.Error())
 		}
 
 		// Set the token string and token claims to the context

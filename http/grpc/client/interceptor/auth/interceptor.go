@@ -71,7 +71,7 @@ func (i *Interceptor) Authenticate() grpc.UnaryClientInterceptor {
 			ctxMetadata, err = commongrpcclientmd.NewUnauthenticatedCtxMetadata(i.accessToken)
 		} else {
 			// Get metadata from the context
-			md, ok := metadata.FromIncomingContext(ctx)
+			md, ok := metadata.FromOutgoingContext(ctx)
 			if !ok {
 				return status.Error(codes.Unauthenticated, commongrpc.MissingMetadataError.Error())
 			}

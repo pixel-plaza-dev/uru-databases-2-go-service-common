@@ -43,7 +43,8 @@ func NewInterceptor(
 	}
 
 	return &Interceptor{
-		accessToken: token.AccessToken,
+		accessToken:       token.AccessToken,
+		grpcInterceptions: grpcInterceptions,
 	}, nil
 }
 

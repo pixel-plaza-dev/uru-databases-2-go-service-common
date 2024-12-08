@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/ed25519"
 )
 
-// Ed25519Validator struct
+// Ed25519Validator handles parsing and validation of JWT tokens with ED25519 public key
 type Ed25519Validator struct {
 	ed25519Key     *ed25519.PublicKey
 	tokenValidator commonjwtvalidatorgrpc.TokenValidator

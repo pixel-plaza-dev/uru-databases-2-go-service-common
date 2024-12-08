@@ -5,7 +5,7 @@ import (
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 )
 
-// Validator does parsing and validation of JWT token
+// Validator does parsing and validation of JWT tokens
 type (
 	Validator interface {
 		GetToken(tokenString string) (*jwt.Token, error)
@@ -14,6 +14,5 @@ type (
 			token string,
 			interception pbtypesgrpc.Interception,
 		) (*jwt.MapClaims, error)
-		ValidateTokenType() error
 	}
 )

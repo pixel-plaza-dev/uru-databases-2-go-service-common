@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/ed25519"
 )
 
-// Ed25519Issuer handles JWT issuing with ED25519 keys
+// Ed25519Issuer handles JWT tokens issuing with ED25519 private key
 type Ed25519Issuer struct {
 	privateKey *ed25519.PrivateKey
 }

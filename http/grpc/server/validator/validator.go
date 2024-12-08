@@ -14,7 +14,10 @@ type (
 	Validator interface {
 		ValidateEmail(emailField string, email string, validations *map[string][]error)
 		ValidateBirthdate(birthdateField string, birthdate *timestamppb.Timestamp, validations *map[string][]error)
-		ValidateNonEmptyStringFields(request interface{}, fieldsToValidate *map[string]string) *map[string][]error
+		ValidateNonEmptyStringFields(request interface{}, fieldsToValidate *map[string]string) (
+			*map[string][]error,
+			error,
+		)
 		CheckValidations(validations *map[string][]error, code codes.Code) error
 	}
 

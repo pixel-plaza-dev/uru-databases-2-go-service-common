@@ -67,6 +67,11 @@ func NewAuthenticatedCtxMetadata(
 func GetCtxWithMetadata(
 	ctxMetadata *CtxMetadata, ctx context.Context,
 ) context.Context {
+	// Check if the context metadata is nil
+	if ctxMetadata == nil {
+		return ctx
+	}
+
 	// Create metadata
 	md := metadata.Pairs()
 

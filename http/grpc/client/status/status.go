@@ -1,4 +1,4 @@
-package error
+package status
 
 import (
 	"errors"
@@ -9,10 +9,10 @@ import (
 )
 
 // ExtractErrorFromStatus extracts the error from the status
-func ExtractErrorFromStatus(mode *commonflag.ModeFlag, err error) error {
+func ExtractErrorFromStatus(mode *commonflag.ModeFlag, err error) (codes.Code, error) {
 	// Check if the flag mode is nil
 	if mode == nil {
-		return commonflag.NilModeFlagError
+		return codes.Internal, commonflag.NilModeFlagError
 	}
 
 	st, ok := status.FromError(err)
@@ -21,9 +21,9 @@ func ExtractErrorFromStatus(mode *commonflag.ModeFlag, err error) error {
 	if !ok {
 		// Check the flag mode
 		if mode.IsProd() {
-			return commongrpc.InternalServerError
+			return codes.Internal, commongrpc.InternalServerError
 		}
-		return err
+		return codes.Internal, err
 	}
 
 	// Check the code
@@ -31,12 +31,12 @@ func ExtractErrorFromStatus(mode *commonflag.ModeFlag, err error) error {
 
 	switch code {
 	case codes.Unavailable:
-		return commongrpc.ServiceUnavailable
+		return code, commongrpc.ServiceUnavailable
 	case codes.Unauthenticated:
-		return commongrpc.Unauthenticated
+		return code, commongrpc.Unauthenticated
 	case codes.PermissionDenied:
-		return commongrpc.Unauthorized
+		return code, commongrpc.Unauthorized
 	default:
-		return errors.New(st.Message())
+		return code, errors.New(st.Message())
 	}
 }

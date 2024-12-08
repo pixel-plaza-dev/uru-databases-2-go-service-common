@@ -10,5 +10,5 @@ var (
 	MetadataNotProvidedError = status.Error(
 		codes.Unauthenticated, "metadata is not provided",
 	)
-	GRPCInterceptionsNilError = errors.New("nil gRPC interceptions map")
+	GRPCInterceptionsNilError = errors.New("nil grpc interceptions map")
 )

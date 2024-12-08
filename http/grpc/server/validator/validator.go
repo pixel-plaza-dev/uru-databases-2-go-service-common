@@ -31,7 +31,7 @@ func NewDefaultValidator() DefaultValidator {
 }
 
 // ValidateEmail validates the email address field
-func (d DefaultValidator) ValidateEmail(emailField string, email string, validations *map[string][]error) {
+func (d *DefaultValidator) ValidateEmail(emailField string, email string, validations *map[string][]error) {
 	if _, err := commonvalidator.ValidMailAddress(email); err != nil {
 		(*validations)[emailField] = append(
 			(*validations)[emailField],
@@ -41,7 +41,7 @@ func (d DefaultValidator) ValidateEmail(emailField string, email string, validat
 }
 
 // ValidateBirthdate validates the birthdate field
-func (d DefaultValidator) ValidateBirthdate(
+func (d *DefaultValidator) ValidateBirthdate(
 	birthdateField string,
 	birthdate *timestamppb.Timestamp,
 	validations *map[string][]error,
@@ -55,7 +55,7 @@ func (d DefaultValidator) ValidateBirthdate(
 }
 
 // ValidateNonEmptyStringFields validates the non-empty string fields
-func (d DefaultValidator) ValidateNonEmptyStringFields(
+func (d *DefaultValidator) ValidateNonEmptyStringFields(
 	request interface{},
 	fieldsToValidate *map[string]string,
 ) (*map[string][]error, error) {
@@ -72,7 +72,7 @@ func (d DefaultValidator) ValidateNonEmptyStringFields(
 }
 
 // CheckValidations checks if there are any validations
-func (d DefaultValidator) CheckValidations(validations *map[string][]error, code codes.Code) error {
+func (d *DefaultValidator) CheckValidations(validations *map[string][]error, code codes.Code) error {
 	if len(*validations) > 0 {
 		err := commonvalidatorerror.FailedValidationError{FieldsErrors: validations}
 		return status.Error(code, err.Error())

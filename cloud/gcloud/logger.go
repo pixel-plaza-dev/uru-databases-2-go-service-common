@@ -21,7 +21,7 @@ func NewLogger(logger commonlogger.Logger) (*Logger, error) {
 }
 
 // LoadedTokenSource logs the loaded token source
-func (l Logger) LoadedTokenSource(tokenSource *oauth.TokenSource) {
+func (l *Logger) LoadedTokenSource(tokenSource *oauth.TokenSource) {
 	// Check if the token source is nil
 	if tokenSource == nil {
 		l.logger.LogError(commonlogger.NewLogError("Failed to load token source", NilTokenSourceError))

@@ -114,7 +114,7 @@ func NewDefaultLogger(name string) DefaultLogger {
 }
 
 // FormatLogMessage formats a log message
-func (d DefaultLogger) FormatLogMessage(logMessage *LogMessage) string {
+func (d *DefaultLogger) FormatLogMessage(logMessage *LogMessage) string {
 	if logMessage == nil {
 		return d.FormattedName
 	}
@@ -123,12 +123,12 @@ func (d DefaultLogger) FormatLogMessage(logMessage *LogMessage) string {
 }
 
 // LogMessage logs a message
-func (d DefaultLogger) LogMessage(logMessage *LogMessage) {
+func (d *DefaultLogger) LogMessage(logMessage *LogMessage) {
 	log.Println(d.FormatLogMessage(logMessage))
 }
 
 // FormatLogError formats a log error
-func (d DefaultLogger) FormatLogError(logError *LogError) string {
+func (d *DefaultLogger) FormatLogError(logError *LogError) string {
 	if logError == nil {
 		return d.FormattedName
 	}
@@ -143,6 +143,6 @@ func (d DefaultLogger) FormatLogError(logError *LogError) string {
 }
 
 // LogError logs an error
-func (d DefaultLogger) LogError(logError *LogError) {
+func (d *DefaultLogger) LogError(logError *LogError) {
 	log.Println(d.FormatLogError(logError))
 }

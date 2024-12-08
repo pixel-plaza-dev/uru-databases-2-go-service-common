@@ -18,7 +18,7 @@ func NewLogger(logger commonlogger.Logger) (*Logger, error) {
 }
 
 // LogKeyValue logs the key value
-func (l Logger) LogKeyValue(key string, value string) {
+func (l *Logger) LogKeyValue(key string, value string) {
 	formattedKey := "Outgoing context key '" + key + "' value"
 	l.logger.LogMessage(commonlogger.NewLogMessage(formattedKey, commonlogger.StatusDebug, value))
 }

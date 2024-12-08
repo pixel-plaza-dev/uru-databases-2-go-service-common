@@ -9,12 +9,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Interceptor is the interceptor for the debug
+// Interceptor is the interceptor for the outgoing context
 type Interceptor struct {
 	logger *Logger
 }
 
-// NewInterceptor creates a new debug interceptor
+// NewInterceptor creates a new interceptor for the outgoing context
 func NewInterceptor(logger *Logger) (*Interceptor, error) {
 	// Check if the logger is nil
 	if logger == nil {

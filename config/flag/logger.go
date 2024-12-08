@@ -20,7 +20,7 @@ func NewLogger(logger commonlogger.Logger) (*Logger, error) {
 }
 
 // ModeFlagSet is the flag set for the mode
-func (l Logger) ModeFlagSet(mode *ModeFlag) {
+func (l *Logger) ModeFlagSet(mode *ModeFlag) {
 	// Check if the mode flag is nil
 	if mode == nil {
 		return

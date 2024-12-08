@@ -4,7 +4,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// OutgoingCtxDebugger interface
-type OutgoingCtxDebugger interface {
+// OutgoingCtx interface
+type OutgoingCtx interface {
 	PrintOutgoingCtx() grpc.UnaryClientInterceptor
 }

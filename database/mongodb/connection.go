@@ -51,7 +51,7 @@ func NewDefaultConnectionHandler(config *Config) (*DefaultConnectionHandler, err
 }
 
 // Connect returns a new MongoDB client
-func (d DefaultConnectionHandler) Connect() (*mongo.Client, error) {
+func (d *DefaultConnectionHandler) Connect() (*mongo.Client, error) {
 	// Check if the connection is already established
 	if d.Client != nil {
 		return d.Client, commondatabase.AlreadyConnectedError
@@ -78,7 +78,7 @@ func (d DefaultConnectionHandler) Connect() (*mongo.Client, error) {
 }
 
 // GetClient returns the MongoDB client
-func (d DefaultConnectionHandler) GetClient() (*mongo.Client, error) {
+func (d *DefaultConnectionHandler) GetClient() (*mongo.Client, error) {
 	// Check if the connection is established
 	if d.Client == nil {
 		return nil, commondatabase.NotConnectedError
@@ -88,7 +88,7 @@ func (d DefaultConnectionHandler) GetClient() (*mongo.Client, error) {
 }
 
 // Disconnect closes the MongoDB client connection
-func (d DefaultConnectionHandler) Disconnect() {
+func (d *DefaultConnectionHandler) Disconnect() {
 	defer func() {
 		// Check if the connection is established
 		if d.Client == nil {

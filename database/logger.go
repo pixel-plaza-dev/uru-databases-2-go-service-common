@@ -20,11 +20,11 @@ func NewLogger(logger commonlogger.Logger) (*Logger, error) {
 }
 
 // ConnectedToDatabase logs a success message when the server connects to the database
-func (l Logger) ConnectedToDatabase() {
+func (l *Logger) ConnectedToDatabase() {
 	l.logger.LogMessage(commonlogger.NewLogMessage("Connected to database", commonlogger.StatusDebug))
 }
 
 // DisconnectedFromDatabase logs a success message when the server disconnects from the database
-func (l Logger) DisconnectedFromDatabase() {
+func (l *Logger) DisconnectedFromDatabase() {
 	l.logger.LogMessage(commonlogger.NewLogMessage("Disconnected from database", commonlogger.StatusDebug))
 }

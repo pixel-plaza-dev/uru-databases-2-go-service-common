@@ -20,7 +20,7 @@ func NewLogger(logger commonlogger.Logger) (*Logger, error) {
 }
 
 // EnvironmentVariableLoaded logs a message when an environment variable is loaded
-func (l Logger) EnvironmentVariableLoaded(variablesName ...string) {
+func (l *Logger) EnvironmentVariableLoaded(variablesName ...string) {
 	l.logger.LogMessage(
 		commonlogger.NewLogMessage(
 			"Environment variable loaded",

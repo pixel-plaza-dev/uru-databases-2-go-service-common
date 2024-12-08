@@ -20,6 +20,6 @@ func NewLogger(logger commonlogger.Logger) (*Logger, error) {
 }
 
 // ServerStarted logs a success message when the server starts
-func (l Logger) ServerStarted(port string) {
+func (l *Logger) ServerStarted(port string) {
 	l.logger.LogMessage(commonlogger.NewLogMessage("Server started", commonlogger.StatusDebug, port))
 }

@@ -49,7 +49,7 @@ func NewDefaultConnectionHandler(config *Config) (*DefaultConnectionHandler, err
 }
 
 // Connect returns a new Redis client
-func (d DefaultConnectionHandler) Connect() (*redis.Client, error) {
+func (d *DefaultConnectionHandler) Connect() (*redis.Client, error) {
 	// Check if the connection is already established
 	if d.Client != nil {
 		return d.Client, commondatabase.AlreadyConnectedError
@@ -71,7 +71,7 @@ func (d DefaultConnectionHandler) Connect() (*redis.Client, error) {
 }
 
 // GetClient returns the Redis client
-func (d DefaultConnectionHandler) GetClient() (*redis.Client, error) {
+func (d *DefaultConnectionHandler) GetClient() (*redis.Client, error) {
 	// Check if the connection is established
 	if d.Client == nil {
 		return nil, commondatabase.NotConnectedError
@@ -81,7 +81,7 @@ func (d DefaultConnectionHandler) GetClient() (*redis.Client, error) {
 }
 
 // Disconnect closes the Redis client connection
-func (d DefaultConnectionHandler) Disconnect() {
+func (d *DefaultConnectionHandler) Disconnect() {
 	defer func() {
 		// Check if the connection is established
 		if d.Client == nil {

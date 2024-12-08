@@ -29,14 +29,5 @@ func ExtractErrorFromStatus(mode *commonflag.ModeFlag, err error) (codes.Code, e
 	// Check the code
 	code := st.Code()
 
-	switch code {
-	case codes.Unavailable:
-		return code, commongrpc.ServiceUnavailable
-	case codes.Unauthenticated:
-		return code, commongrpc.Unauthenticated
-	case codes.PermissionDenied:
-		return code, commongrpc.Unauthorized
-	default:
-		return code, errors.New(st.Message())
-	}
+	return code, errors.New(st.Message())
 }

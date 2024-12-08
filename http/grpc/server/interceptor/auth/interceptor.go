@@ -5,13 +5,14 @@ import (
 	"errors"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
+	commongrpcinfo "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/info"
+	commongrpcmd "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/metadata"
 	commongrpcserverctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/server/context"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"strings"
 )
 
 // Interceptor is the interceptor for the authentication
@@ -30,7 +31,7 @@ func NewInterceptor(
 		return nil, commonvalidator.NilValidatorError
 	}
 	if grpcInterceptions == nil {
-		return nil, GRPCInterceptionsNilError
+		return nil, commongrpc.NilGRPCInterceptionsError
 	}
 
 	return &Interceptor{
@@ -39,23 +40,14 @@ func NewInterceptor(
 	}, nil
 }
 
-// GetMethodName gets the method name from the full method
-func (i *Interceptor) GetMethodName(fullMethod string) string {
-	parts := strings.Split(fullMethod, "/")
-	if len(parts) < 3 {
-		return ""
-	}
-	return parts[2]
-}
-
 // Authenticate returns the authentication interceptor
 func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		// Get method name
-		methodName := i.GetMethodName(info.FullMethod)
+		// Get the method name
+		methodName := commongrpcinfo.GetMethodName(info.FullMethod)
 
 		// Check if the method should be intercepted
 		interception, ok := (*i.grpcInterceptions)[pbtypesgrpc.NewMethod(
@@ -68,11 +60,11 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 		// Get metadata from the context
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
-			return nil, status.Error(codes.Unauthenticated, MetadataNotProvidedError.Error())
+			return nil, status.Error(codes.Unauthenticated, commongrpc.MissingMetadataError.Error())
 		}
 
 		// Get the token from the metadata
-		tokenString, err := commongrpcserverctx.GetAuthorizationTokenFromMetadata(md)
+		tokenString, err := commongrpcmd.GetAuthorizationTokenFromMetadata(md)
 		if err != nil {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
 		}

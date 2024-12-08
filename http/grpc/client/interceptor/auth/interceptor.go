@@ -2,23 +2,30 @@ package auth
 
 import (
 	"context"
-	"errors"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
-	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
+	commongrpcclientmd "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/metadata"
+	commongrpcinfo "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/info"
+	commongrpcmd "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/metadata"
+	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/oauth"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 // Interceptor is the interceptor for the authentication
 type Interceptor struct {
-	accessToken string
+	accessToken       string
+	grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception
 }
 
 // NewInterceptor creates a new authentication interceptor
-func NewInterceptor(tokenSource *oauth.TokenSource) (*Interceptor, error) {
+func NewInterceptor(
+	tokenSource *oauth.TokenSource,
+	grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
+) (*Interceptor, error) {
 	// Check if the token source is nil
 	if tokenSource == nil {
 		return nil, commongcloud.NilTokenSourceError
@@ -30,26 +37,14 @@ func NewInterceptor(tokenSource *oauth.TokenSource) (*Interceptor, error) {
 		return nil, err
 	}
 
+	// Check if the gRPC interceptions is nil
+	if grpcInterceptions == nil {
+		return nil, commongrpc.NilGRPCInterceptionsError
+	}
+
 	return &Interceptor{
 		accessToken: token.AccessToken,
 	}, nil
-}
-
-// GetCtxTokenString tries to get the token string from the context metadata of the gRPC request
-func (i *Interceptor) GetCtxTokenString(ctx context.Context) (string, error) {
-	// Get the token from the context
-	value := ctx.Value(commongrpc.AuthorizationMetadataKey)
-	if value == nil {
-		return "", MissingTokenError
-	}
-
-	// Check the type of the value
-	token, ok := value.(string)
-	if !ok {
-		return "", UnexpectedTokenTypeError
-	}
-
-	return token, nil
 }
 
 // Authenticate returns a new unary client interceptor that adds authentication metadata to the context
@@ -61,25 +56,33 @@ func (i *Interceptor) Authenticate() grpc.UnaryClientInterceptor {
 		cc *grpc.ClientConn,
 		invoker grpc.UnaryInvoker,
 		opts ...grpc.CallOption,
-	) error {
-		// Get the JWT token
-		jwtToken, err := i.GetCtxTokenString(ctx)
+	) (err error) {
+		// Get the method name
+		methodName := commongrpcinfo.GetMethodName(method)
 
-		// Create the context metadata
-		var ctxMetadata *commongrpcctx.CtxMetadata
-		if err == nil {
-			// Create the authenticated context metadata
-			ctxMetadata, err = commongrpcctx.NewAuthenticatedCtxMetadata(
-				i.accessToken, jwtToken,
-			)
+		// Check if the method should be intercepted
+		var ctxMetadata *commongrpcclientmd.CtxMetadata
+		interception, ok := (*i.grpcInterceptions)[pbtypesgrpc.NewMethod(
+			methodName,
+		)]
+		if !ok || interception == pbtypesgrpc.None {
+			// Create the unauthenticated context metadata
+			ctxMetadata, err = commongrpcclientmd.NewUnauthenticatedCtxMetadata(i.accessToken)
 		} else {
-			// Check if the error is a missing token error
-			if errors.Is(err, MissingTokenError) {
-				// Create the unauthenticated context metadata
-				ctxMetadata, err = commongrpcctx.NewUnauthenticatedCtxMetadata(i.accessToken)
-			} else {
-				return status.Error(codes.Aborted, err.Error())
+			// Get metadata from the context
+			md, ok := metadata.FromIncomingContext(ctx)
+			if !ok {
+				return status.Error(codes.Unauthenticated, commongrpc.MissingMetadataError.Error())
 			}
+
+			// Get the token from the metadata
+			tokenString, err := commongrpcmd.GetAuthorizationTokenFromMetadata(md)
+			if err != nil {
+				return status.Error(codes.Unauthenticated, err.Error())
+			}
+
+			// Create the authenticated context metadata
+			ctxMetadata, err = commongrpcclientmd.NewAuthenticatedCtxMetadata(i.accessToken, tokenString)
 		}
 
 		// Check if there was an error
@@ -88,7 +91,7 @@ func (i *Interceptor) Authenticate() grpc.UnaryClientInterceptor {
 		}
 
 		// Get the gRPC client context with the metadata
-		ctx = commongrpcctx.GetCtxWithMetadata(ctxMetadata, ctx)
+		ctx = commongrpcclientmd.GetCtxWithMetadata(ctxMetadata, ctx)
 
 		// Invoke the original invoker
 		return invoker(ctx, method, req, reply, cc, opts...)

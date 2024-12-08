@@ -26,8 +26,8 @@ type (
 )
 
 // NewDefaultValidator creates a new default validator
-func NewDefaultValidator() DefaultValidator {
-	return DefaultValidator{}
+func NewDefaultValidator() *DefaultValidator {
+	return &DefaultValidator{}
 }
 
 // ValidateEmail validates the email address field

@@ -51,7 +51,7 @@ func CreateGRPCStructFieldsToValidate(exampleStruct interface{}, mode *commonfla
 
 		// Print field on dev mode
 		fieldType := field.Type
-		if mode.IsDev() {
+		if mode != nil && mode.IsDev() {
 			fmt.Println("field name: ", field.Name)
 			fmt.Println("field type: ", fieldType)
 		}

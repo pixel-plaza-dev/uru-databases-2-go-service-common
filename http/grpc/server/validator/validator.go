@@ -21,7 +21,7 @@ type (
 			birthdate *timestamppb.Timestamp,
 			structFieldsValidations *commonvalidatorfields.StructFieldsValidations,
 		)
-		ValidateNilFields(request interface{}, structFieldsValidations *commonvalidatorfields.StructFieldsValidations) (
+		ValidateNilFields(request interface{}, structFieldsToValidate *commonvalidatorfields.StructFieldsToValidate) (
 			*commonvalidatorfields.StructFieldsValidations,
 			error,
 		)

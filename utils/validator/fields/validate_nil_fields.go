@@ -29,41 +29,65 @@ func ValidateNilFields(
 	}
 
 	// Iterate over the fields
-	for fieldName, validationName := range (*structFieldsToValidate).Fields {
-		// Get field
-		field := valueReflection.FieldByName(fieldName)
+	typeReflection := valueReflection.Type()
+	fields := (*structFieldsToValidate).Fields
+	nestedStructFieldsToValidate := (*structFieldsToValidate).NestedStructFieldsToValidate
+	for i := 0; i < valueReflection.NumField(); i++ {
+		fieldValue := valueReflection.Field(i)
+		fieldType := typeReflection.Field(i)
 
 		// Check if the field is a pointer
-		if field.Kind() == reflect.Ptr {
-			// Check if the field exists
-			if field.IsNil() {
+		if fieldValue.Kind() != reflect.Ptr {
+			// Check if the field has to be validated
+			if fields == nil {
+				continue
+			}
+			validationName, ok := fields[fieldType.Name]
+			if !ok {
+				continue
+			}
+
+			// Check if the field is uninitialized
+			if fieldValue.IsZero() {
+				structFieldsValidations.AddFailedFieldValidationError(validationName, FieldNotFoundError)
+			}
+		} else {
+			// Check if the field is a nested struct
+			if fieldValue.Elem().Kind() != reflect.Struct {
+				continue // It's an optional field
+			}
+
+			// Check if the nested struct has to be validated
+			if fields == nil {
+				continue
+			}
+			validationName, ok := fields[fieldType.Name]
+			if !ok {
+				continue
+			}
+
+			// Check if the field is initialized
+			if fieldValue.IsNil() {
 				structFieldsValidations.AddFailedFieldValidationError(validationName, FieldNotFoundError)
 				continue
 			}
 
-			// Dereference the field
-			field = field.Elem()
-
-			// Check if the field is a nested struct
-			if field.Kind() == reflect.Struct {
-				// Check if it is a nested struct registered for validation
-				nestedStructFieldsToValidate, ok := (*structFieldsToValidate).NestedStructFieldsToValidate[fieldName]
-				if !ok {
-					continue
-				}
-
-				// Validate nested struct
-				nestedStructFieldsValidations, err := ValidateNilFields(
-					field.Addr().Interface(),
-					nestedStructFieldsToValidate,
-				)
-				if err != nil {
-					return nil, err
-				}
-
-				// Add nested struct validations to the struct fields validations
-				structFieldsValidations.SetNestedFieldsValidations(validationName, nestedStructFieldsValidations)
+			// Get the nested struct fields to validate
+			nestedFieldStructFieldsToValidate, ok := nestedStructFieldsToValidate[fieldType.Name]
+			if !ok {
+				continue
 			}
+
+			// Validate nested struct
+			nestedStructFieldsValidations, err := ValidateNilFields(
+				fieldValue.Addr().Interface(), // TEST IF THIS A POINTER OF THE STRUCT
+				nestedFieldStructFieldsToValidate,
+			)
+			if err != nil {
+				return nil, err
+			}
+			// Add nested struct validations to the struct fields validations
+			structFieldsValidations.SetNestedFieldsValidations(validationName, nestedStructFieldsValidations)
 		}
 	}
 

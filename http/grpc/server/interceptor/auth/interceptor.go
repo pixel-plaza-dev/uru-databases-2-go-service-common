@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
+	commonvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	commongrpcinfo "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/info"
 	commongrpcmd "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/metadata"
 	commongrpcserverctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/server/context"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
+	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -71,10 +73,15 @@ func (i *Interceptor) Authenticate() grpc.UnaryServerInterceptor {
 
 		// Validate the token and get the validated claims
 		claims, err := i.validator.GetValidatedClaims(tokenString, interception)
-		if err != nil && errors.Is(err, commonvalidator.NilJwtClaimsError) {
-			return nil, status.Error(codes.Unauthenticated, err.Error())
-		}
 		if err != nil {
+			if errors.Is(err, commonvalidator.NilJwtClaimsError) {
+				return nil, status.Error(codes.Unauthenticated, err.Error())
+			}
+
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				return nil, status.Error(codes.Unauthenticated, commonvalidatorgrpc.TokenNotFoundOrExpiredError.Error())
+			}
+
 			return nil, status.Error(codes.Internal, commongrpc.InternalServerError.Error())
 		}
 

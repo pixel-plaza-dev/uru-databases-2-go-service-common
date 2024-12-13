@@ -73,7 +73,7 @@ func (d *DefaultTokenValidator) IsTokenValid(
 		if err != nil {
 			return false, err
 		}
-		return response.IsValid, err
+		return response.IsValid, nil
 	}
 
 	// Check if the access token is valid
@@ -85,5 +85,5 @@ func (d *DefaultTokenValidator) IsTokenValid(
 	if err != nil {
 		return false, err
 	}
-	return response.IsValid, err
+	return response.IsValid, nil
 }

@@ -3,7 +3,6 @@
     "required": [
       "jwt_refresh_token_id",
       "issued_at",
-      "expires_at"
     ],
     "properties": {
       "jwt_refresh_token_id": {
@@ -11,10 +10,6 @@
         "description": "must be an objectId and is required"
       },
       "issued_at": {
-        "bsonType": "date",
-        "description": "must be a date and is required"
-      },
-      "expires_at": {
         "bsonType": "date",
         "description": "must be a date and is required"
       },

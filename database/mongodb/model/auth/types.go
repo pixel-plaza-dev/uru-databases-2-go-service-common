@@ -22,7 +22,6 @@ type JwtRefreshToken struct {
 	ParentRefreshTokenID primitive.ObjectID `json:"parent_refresh_token_id,omitempty" bson:"parent_refresh_token_id,omitempty"`
 	IPv4Address          string             `json:"ipv4_address" bson:"ipv4_address"`
 	IssuedAt             time.Time          `json:"issued_at" bson:"issued_at"`
-	ExpiresAt            time.Time          `json:"expires_at" bson:"expires_at"`
 	RevokedAt            time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
@@ -32,7 +31,6 @@ type JwtAccessToken struct {
 	UserID            primitive.ObjectID `json:"user_id" bson:"user_id"`
 	JwtRefreshTokenID primitive.ObjectID `json:"jwt_refresh_token_id" bson:"jwt_refresh_token_id"`
 	IssuedAt          time.Time          `json:"issued_at" bson:"issued_at"`
-	ExpiresAt         time.Time          `json:"expires_at" bson:"expires_at"`
 	RevokedAt         time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 

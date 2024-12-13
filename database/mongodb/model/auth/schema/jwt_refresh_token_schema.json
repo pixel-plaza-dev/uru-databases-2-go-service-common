@@ -2,8 +2,7 @@
   "$jsonSchema": {
     "required": [
       "user_id",
-      "issued_at",
-      "expires_at"
+      "issued_at"
     ],
     "properties": {
       "user_id": {
@@ -11,10 +10,6 @@
         "description": "must be an objectId and is required"
       },
       "issued_at": {
-        "bsonType": "date",
-        "description": "must be a date and is required"
-      },
-      "expires_at": {
         "bsonType": "date",
         "description": "must be a date and is required"
       },

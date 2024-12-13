@@ -117,7 +117,7 @@ func (s *StructFieldsValidations) FailedValidationsMessage(level int) *string {
 
 		// Add field properties flag
 		message.WriteString(fieldPropertiesPadding)
-		message.WriteString("$errors: [")
+		message.WriteString("$errors: [\n")
 
 		// Iterate over all errors for the field
 		iteratedFields[field] = true

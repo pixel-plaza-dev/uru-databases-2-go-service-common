@@ -12,9 +12,13 @@ type StructFieldsValidations struct {
 
 // NewStructFieldsValidations creates a new StructFieldsValidations struct
 func NewStructFieldsValidations() *StructFieldsValidations {
+	// Initialize the struct fields validations
+	failedFieldsValidations := make(map[string][]error)
+	nestedFieldsValidations := make(map[string]*StructFieldsValidations)
+
 	return &StructFieldsValidations{
-		FailedFieldsValidations: &map[string][]error{},
-		NestedFieldsValidations: &map[string]*StructFieldsValidations{},
+		FailedFieldsValidations: &failedFieldsValidations,
+		NestedFieldsValidations: &nestedFieldsValidations,
 	}
 }
 

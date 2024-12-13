@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// User is the MongoDB for the user entity
+// User is the MongoDB user model
 type User struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id"`
 	Username       string             `json:"username" bson:"username"`
@@ -18,7 +18,7 @@ type User struct {
 	UUID           string             `json:"uuid" bson:"uuid"`
 }
 
-// UserEmail is the MongoDB for the user email entity
+// UserEmail is the MongoDB user email model
 type UserEmail struct {
 	ID         primitive.ObjectID `json:"id" bson:"_id"`
 	UserID     primitive.ObjectID `json:"user_id" bson:"user_id"`
@@ -29,7 +29,7 @@ type UserEmail struct {
 	IsPrimary  bool               `json:"is_primary" bson:"is_primary"`
 }
 
-// UserPhoneNumber is the MongoDB for the user phone number entity
+// UserPhoneNumber is the MongoDB user phone number model
 type UserPhoneNumber struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	UserID      primitive.ObjectID `json:"user_id" bson:"user_id"`
@@ -39,7 +39,7 @@ type UserPhoneNumber struct {
 	RevokedAt   time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// UserEmailVerification is the MongoDB for the user email verification entity
+// UserEmailVerification is the MongoDB user email verification model
 type UserEmailVerification struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	UserEmailID primitive.ObjectID `json:"user_email_id" bson:"user_email_id"`
@@ -50,7 +50,7 @@ type UserEmailVerification struct {
 	RevokedAt   time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// UserPhoneNumberVerification is the MongoDB for the user phone number verification entity
+// UserPhoneNumberVerification is the MongoDB user phone number verification model
 type UserPhoneNumberVerification struct {
 	ID                primitive.ObjectID `json:"id" bson:"_id"`
 	UserPhoneNumberID primitive.ObjectID `json:"user_phone_number_id" bson:"user_phone_number_id"`
@@ -61,7 +61,7 @@ type UserPhoneNumberVerification struct {
 	RevokedAt         time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// UserResetPassword is the MongoDB for the user password reset entity
+// UserResetPassword is the MongoDB user password reset model
 type UserResetPassword struct {
 	ID        primitive.ObjectID `json:"id" bson:"_id"`
 	UserID    primitive.ObjectID `json:"user_id" bson:"user_id"`
@@ -72,7 +72,7 @@ type UserResetPassword struct {
 	RevokedAt time.Time          `json:"revoked_at,omitempty" bson:"revoked_at,omitempty"`
 }
 
-// UserUsernameLog is the MongoDB for the user username log entity
+// UserUsernameLog is the MongoDB user username log model
 type UserUsernameLog struct {
 	ID         primitive.ObjectID `json:"id" bson:"_id"`
 	UserID     primitive.ObjectID `json:"user_id" bson:"user_id"`
@@ -80,7 +80,7 @@ type UserUsernameLog struct {
 	AssignedAt time.Time          `json:"assigned_at" bson:"assigned_at"`
 }
 
-// UserHashedPasswordLog is the MongoDB for the user hashed password log entity
+// UserHashedPasswordLog is the MongoDB user hashed password log model
 type UserHashedPasswordLog struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id"`
 	UserID         primitive.ObjectID `json:"user_id" bson:"user_id"`

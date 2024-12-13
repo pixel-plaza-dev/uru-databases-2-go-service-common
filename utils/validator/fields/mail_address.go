@@ -1,4 +1,4 @@
-package validator
+package fields
 
 import (
 	"net/mail"

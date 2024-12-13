@@ -1,8 +1,7 @@
 package validator
 
 import (
-	commonvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/validator"
-	commonvalidatorerror "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/validator/error"
+	commonvalidatorfields "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/validator/fields"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -12,13 +11,21 @@ import (
 type (
 	// Validator interface
 	Validator interface {
-		ValidateEmail(emailField string, email string, validations *map[string][]error)
-		ValidateBirthdate(birthdateField string, birthdate *timestamppb.Timestamp, validations *map[string][]error)
-		ValidateNonEmptyStringFields(request interface{}, fieldsToValidate *map[string]string) (
-			*map[string][]error,
+		ValidateEmail(
+			emailField string,
+			email string,
+			structFieldsValidations *commonvalidatorfields.StructFieldsValidations,
+		)
+		ValidateBirthdate(
+			birthdateField string,
+			birthdate *timestamppb.Timestamp,
+			structFieldsValidations *commonvalidatorfields.StructFieldsValidations,
+		)
+		ValidateNilFields(request interface{}, structFieldsValidations *commonvalidatorfields.StructFieldsValidations) (
+			*commonvalidatorfields.StructFieldsValidations,
 			error,
 		)
-		CheckValidations(validations *map[string][]error, code codes.Code) error
+		CheckValidations(structFieldsValidations *commonvalidatorfields.StructFieldsValidations, code codes.Code) error
 	}
 
 	// DefaultValidator struct
@@ -31,12 +38,13 @@ func NewDefaultValidator() *DefaultValidator {
 }
 
 // ValidateEmail validates the email address field
-func (d *DefaultValidator) ValidateEmail(emailField string, email string, validations *map[string][]error) {
-	if _, err := commonvalidator.ValidMailAddress(email); err != nil {
-		(*validations)[emailField] = append(
-			(*validations)[emailField],
-			commonvalidator.InvalidMailAddressError,
-		)
+func (d *DefaultValidator) ValidateEmail(
+	emailField string,
+	email string,
+	structFieldsValidations *commonvalidatorfields.StructFieldsValidations,
+) {
+	if _, err := commonvalidatorfields.ValidMailAddress(email); err != nil {
+		structFieldsValidations.AddFailedFieldValidationError(emailField, commonvalidatorfields.InvalidMailAddressError)
 	}
 }
 
@@ -44,38 +52,34 @@ func (d *DefaultValidator) ValidateEmail(emailField string, email string, valida
 func (d *DefaultValidator) ValidateBirthdate(
 	birthdateField string,
 	birthdate *timestamppb.Timestamp,
-	validations *map[string][]error,
+	structFieldsValidations *commonvalidatorfields.StructFieldsValidations,
 ) {
 	if birthdate == nil || birthdate.AsTime().After(time.Now()) {
-		(*validations)[birthdateField] = append(
-			(*validations)[birthdateField],
-			commonvalidator.InvalidBirthdateError,
+		structFieldsValidations.AddFailedFieldValidationError(
+			birthdateField,
+			commonvalidatorfields.InvalidBirthdateError,
 		)
 	}
 }
 
-// ValidateNonEmptyStringFields validates the non-empty string fields
-func (d *DefaultValidator) ValidateNonEmptyStringFields(
+// ValidateNilFields validates the nil fields
+func (d *DefaultValidator) ValidateNilFields(
 	request interface{},
-	fieldsToValidate *map[string]string,
-) (*map[string][]error, error) {
-	// Create the validations map
-	validations := make(map[string][]error)
-
-	// Check if the required string fields are empty
-	err := commonvalidator.ValidNonEmptyStringFields(
-		&validations,
+	structFieldsToValidate *commonvalidatorfields.StructFieldsToValidate,
+) (*commonvalidatorfields.StructFieldsValidations, error) {
+	return commonvalidatorfields.ValidateNilFields(
 		request,
-		fieldsToValidate,
+		structFieldsToValidate,
 	)
-	return &validations, err
 }
 
 // CheckValidations checks if there are any validations
-func (d *DefaultValidator) CheckValidations(validations *map[string][]error, code codes.Code) error {
-	if len(*validations) > 0 {
-		err := commonvalidatorerror.FailedValidationError{FieldsErrors: validations}
-		return status.Error(code, err.Error())
+func (d *DefaultValidator) CheckValidations(
+	structFieldsValidations *commonvalidatorfields.StructFieldsValidations,
+	code codes.Code,
+) error {
+	if structFieldsValidations.HasFailed() {
+		return status.Error(code, structFieldsValidations.String())
 	}
 	return nil
 }

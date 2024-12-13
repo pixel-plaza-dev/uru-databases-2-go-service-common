@@ -72,22 +72,6 @@ func GetCtxTokenClaimsUserId(ctx context.Context) (string, error) {
 	return userId, nil
 }
 
-// GetCtxTokenClaimsSharedUserId gets the token claims shared user ID from the context
-func GetCtxTokenClaimsSharedUserId(ctx context.Context) (string, error) {
-	// Get the claims from the context
-	claims, err := GetCtxTokenClaims(ctx)
-	if err != nil {
-		return "", err
-	}
-
-	// Get the shared user ID from the claims
-	sharedUserId, ok := (*claims)[commonjwt.UserSharedIdClaim].(string)
-	if !ok {
-		return "", MissingTokenClaimsSharedUserIdError
-	}
-	return sharedUserId, nil
-}
-
 // GetCtxTokenClaimsJwtId gets the token claims JWT ID from the context
 func GetCtxTokenClaimsJwtId(ctx context.Context) (string, error) {
 	// Get the claims from the context

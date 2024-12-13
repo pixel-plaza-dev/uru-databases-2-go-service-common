@@ -4,7 +4,7 @@ import (
 	"context"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
-	context2 "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
+	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
 	"google.golang.org/grpc/metadata"
 	"strings"
 )
@@ -26,7 +26,7 @@ type (
 func NewCtxMetadata(metadataFields *map[string]string) (*CtxMetadata, error) {
 	// Check if the metadata fields are nil
 	if metadataFields == nil {
-		return nil, context2.NilMetadataFieldsError
+		return nil, commongrpcclientctx.NilMetadataFieldsError
 	}
 
 	// Add the metadata fields

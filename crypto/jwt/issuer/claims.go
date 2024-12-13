@@ -2,7 +2,6 @@ package issuer
 
 import (
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	"time"
 )
@@ -19,7 +18,6 @@ func GetExpirationTime(
 func GenerateClaims(
 	jwtId string,
 	userId string,
-	userUUID uuid.UUID,
 	issuedAt time.Time,
 	expirationAt time.Time,
 	isRefreshToken bool,
@@ -29,7 +27,6 @@ func GenerateClaims(
 		"iat":                         issuedAt.Unix(),
 		commonjwt.IdClaim:             jwtId,
 		commonjwt.UserIdClaim:         userId,
-		commonjwt.UserSharedIdClaim:   userUUID.String(),
 		commonjwt.IsRefreshTokenClaim: isRefreshToken,
 	}
 }

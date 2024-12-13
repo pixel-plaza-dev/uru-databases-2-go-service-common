@@ -43,12 +43,13 @@ func (s *StructFieldsValidations) HasFailed() bool {
 // AddFailedFieldValidationError adds a failed field validation error to the struct
 func (s *StructFieldsValidations) AddFailedFieldValidationError(validationName string, validationError error) {
 	// Check if the field name is already in the map
-	if _, ok := (*s.FailedFieldsValidations)[validationName]; !ok {
-		(*s.FailedFieldsValidations)[validationName] = []error{}
+	failedFieldsValidations := *s.FailedFieldsValidations
+	if _, ok := failedFieldsValidations[validationName]; !ok {
+		failedFieldsValidations[validationName] = []error{validationError}
+	} else {
+		// Append the validation error to the field name
+		failedFieldsValidations[validationName] = append(failedFieldsValidations[validationName], validationError)
 	}
-
-	// Append the validation error to the field name
-	(*s.FailedFieldsValidations)[validationName] = append((*s.FailedFieldsValidations)[validationName], validationError)
 }
 
 // SetNestedFieldsValidations sets the nested struct fields validations to the struct

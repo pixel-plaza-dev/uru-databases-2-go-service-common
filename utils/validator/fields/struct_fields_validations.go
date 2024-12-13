@@ -88,7 +88,7 @@ func (s *StructFieldsValidations) FailedValidationsMessage(level int) *string {
 	message.WriteString("$validations: {\n")
 
 	// Get the number of nested fields validations
-	var iteratedFields map[string]bool
+	iteratedFields := make(map[string]bool)
 	fieldsValidationsNumber := 0
 	nestedFieldsValidationsNumber := 0
 	iteratedFieldsValidationsNumber := 0

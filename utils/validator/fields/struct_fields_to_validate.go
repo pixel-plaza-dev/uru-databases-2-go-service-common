@@ -2,6 +2,7 @@ package fields
 
 import (
 	"fmt"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	"reflect"
 	"strings"
 )
@@ -20,7 +21,10 @@ type StructFieldsToValidate struct {
 }
 
 // CreateGRPCStructFieldsToValidate creates the fields to validate from a gRPC struct
-func CreateGRPCStructFieldsToValidate(exampleStruct interface{}) (*StructFieldsToValidate, error) {
+func CreateGRPCStructFieldsToValidate(exampleStruct interface{}, mode *commonflag.ModeFlag) (
+	*StructFieldsToValidate,
+	error,
+) {
 	// Reflection of data
 	valueReflection := reflect.ValueOf(exampleStruct)
 
@@ -46,8 +50,14 @@ func CreateGRPCStructFieldsToValidate(exampleStruct interface{}) (*StructFieldsT
 			continue
 		}
 
-		// Check if the field is a pointer to a struct
+		// Print field on dev mode
 		fieldType := field.Type
+		if mode.IsDev() {
+			fmt.Println("field name: ", field.Name)
+			fmt.Println("field type: ", fieldType)
+		}
+
+		// Check if the field is a pointer to a struct
 		if fieldType.Kind() != reflect.Ptr {
 			// Get the Protobuf tag of the field
 			protobufTag = field.Tag.Get("protobuf")
@@ -74,7 +84,10 @@ func CreateGRPCStructFieldsToValidate(exampleStruct interface{}) (*StructFieldsT
 			}
 
 			// Create a new StructFieldsToValidate for the nested field
-			fieldNestedStructFieldsToValidate, err := CreateGRPCStructFieldsToValidate(reflect.New(fieldType).Interface())
+			fieldNestedStructFieldsToValidate, err := CreateGRPCStructFieldsToValidate(
+				reflect.New(fieldType).Interface(),
+				mode,
+			)
 			if err != nil {
 				return nil, err
 			}

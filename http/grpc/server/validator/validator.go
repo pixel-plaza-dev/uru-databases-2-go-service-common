@@ -1,6 +1,7 @@
 package validator
 
 import (
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	commonvalidatorfields "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/validator/fields"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -29,12 +30,16 @@ type (
 	}
 
 	// DefaultValidator struct
-	DefaultValidator struct{}
+	DefaultValidator struct {
+		mode *commonflag.ModeFlag
+	}
 )
 
 // NewDefaultValidator creates a new default validator
-func NewDefaultValidator() *DefaultValidator {
-	return &DefaultValidator{}
+func NewDefaultValidator(mode *commonflag.ModeFlag) *DefaultValidator {
+	return &DefaultValidator{
+		mode: mode,
+	}
 }
 
 // ValidateEmail validates the email address field
@@ -70,6 +75,7 @@ func (d *DefaultValidator) ValidateNilFields(
 	return commonvalidatorfields.ValidateNilFields(
 		request,
 		structFieldsToValidate,
+		d.mode,
 	)
 }
 

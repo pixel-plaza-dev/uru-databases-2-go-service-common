@@ -26,11 +26,11 @@ func CreateGRPCStructFieldsToValidate(exampleStruct interface{}, mode *commonfla
 	error,
 ) {
 	// Reflection of data
-	valueReflection := reflect.ValueOf(exampleStruct)
+	typeReflection := reflect.TypeOf(exampleStruct)
 
 	// If data is a pointer, dereference it
-	if valueReflection.Kind() == reflect.Ptr {
-		valueReflection = valueReflection.Elem()
+	if typeReflection.Kind() == reflect.Ptr {
+		typeReflection = typeReflection.Elem()
 	}
 
 	// Initialize the map fields and the map of nested fields to validate
@@ -38,7 +38,6 @@ func CreateGRPCStructFieldsToValidate(exampleStruct interface{}, mode *commonfla
 	rootNestedStructFieldsToValidate := make(map[string]*StructFieldsToValidate)
 
 	// Reflection of the type of data
-	typeReflection := reflect.TypeOf(valueReflection)
 	var protobufTag string
 	var protobufName string
 	for i := 0; i < typeReflection.NumField(); i++ {
